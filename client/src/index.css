@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #030711;
+    color: #F1F5F9;
+    @apply antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Outfit', sans-serif;
+  }
+}
+
+@layer components {
+  .glass {
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  .glass-card {
+    @apply glass rounded-2xl p-6 transition-all duration-300 hover:border-white/20 hover:bg-white/10;
+  }
+
+  .btn-primary {
+    background-color: #8B5CF6;
+    color: #FFFFFF;
+    @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:opacity-90 active:scale-95;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  }
+
+  .btn-secondary {
+    @apply bg-slate-800 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:bg-slate-700 active:scale-95;
+  }
+
+  .input-field {
+    @apply bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none transition-all duration-300 w-full;
+  }
+
+  .input-field:focus {
+    border-color: rgba(139, 92, 246, 0.5);
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1);
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400;
+  }
+}
+
+.animate-fade-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
