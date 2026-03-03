@@ -9,7 +9,7 @@ const Navbar = () => {
     const { cartItems } = useCart();
 
     return (
-        <nav className="fixed w-full z-50 glass border-b border-white/5 top-0 transition-all duration-300">
+        <nav className="fixed w-full z-50 glass border-b border-slate-100 top-0 transition-all duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-20">
                     <div className="flex items-center">
@@ -33,7 +33,11 @@ const Navbar = () => {
                             </Link>
                             {user ? (
                                 <div className="flex items-center space-x-4">
-                                    <span className="text-white/70 text-sm">Hi, {user.name}</span>
+                                    <span className="text-slate-600 text-sm">Hi, {user.name}</span>
+                                    {user.role === "admin" && (
+                                        <Link to="/admin" className="nav-link font-bold text-primary">Admin</Link>
+                                    )}
+                                    <Link to="/profile" className="nav-link">My Orders</Link>
                                     <button onClick={logout} className="btn-secondary py-1.5 px-4 text-sm">Logout</button>
                                 </div>
                             ) : (
@@ -46,7 +50,7 @@ const Navbar = () => {
                     <div className="md:hidden flex items-center">
                         <button
                             onClick={() => setIsOpen(!isOpen)}
-                            className="inline-flex items-center justify-center p-2 rounded-md text-white/70 hover:text-white"
+                            className="inline-flex items-center justify-center p-2 rounded-md text-slate-500 hover:text-slate-800"
                         >
                             <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                 <path className={isOpen ? "hidden" : "inline-flex"} strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -64,7 +68,10 @@ const Navbar = () => {
                     <Link to="/shop" className="block px-3 py-2 text-white/70">Shop</Link>
                     <Link to="/cart" className="block px-3 py-2 text-white/70">Cart ({cartItems.length})</Link>
                     {user ? (
-                        <button onClick={logout} className="w-full text-left px-3 py-2 text-primary">Logout</button>
+                        <>
+                            <Link to="/profile" className="block px-3 py-2 text-slate-600">My Orders</Link>
+                            <button onClick={logout} className="w-full text-left px-3 py-2 text-primary">Logout</button>
+                        </>
                     ) : (
                         <Link to="/login" className="block px-3 py-2 text-primary font-bold">Login</Link>
                     )}

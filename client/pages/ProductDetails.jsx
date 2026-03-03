@@ -23,12 +23,12 @@ const ProductDetails = () => {
         fetchProduct();
     }, [id]);
 
-    if (loading) return <div className="container mx-auto px-4 py-40 animate-pulse bg-white/5 glass-card"></div>;
-    if (!product) return <div className="container mx-auto px-4 py-40 text-center text-white/40">Product not found.</div>;
+    if (loading) return <div className="container mx-auto px-4 py-40 animate-pulse bg-slate-100 glass-card"></div>;
+    if (!product) return <div className="container mx-auto px-4 py-40 text-center text-slate-400">Product not found.</div>;
 
     return (
         <div className="container mx-auto px-4 py-12">
-            <Link to="/shop" className="text-white/40 hover:text-primary mb-8 inline-flex items-center gap-2 transition-colors">
+            <Link to="/shop" className="text-slate-400 hover:text-primary mb-8 inline-flex items-center gap-2 transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
@@ -54,12 +54,12 @@ const ProductDetails = () => {
                 <div className="flex flex-col justify-center">
                     <span className="text-primary font-bold tracking-widest text-sm uppercase mb-4">{product.category}</span>
                     <h1 className="text-5xl font-black mb-6">{product.title}</h1>
-                    <p className="text-white/60 text-lg mb-10 leading-relaxed">{product.description}</p>
+                    <p className="text-slate-600 text-lg mb-10 leading-relaxed">{product.description}</p>
 
                     <div className="flex items-center gap-6 mb-12">
                         <span className="text-4xl font-black gradient-text">${product.discountPrice || product.price}</span>
                         {product.discountPrice && (
-                            <span className="text-2xl text-white/20 line-through">${product.price}</span>
+                            <span className="text-2xl text-slate-200 line-through">${product.price}</span>
                         )}
                     </div>
 
@@ -73,7 +73,7 @@ const ProductDetails = () => {
                             </svg>
                             Add to Bags
                         </button>
-                        <p className="text-center text-white/30 text-sm">Free shipping on all premium items.</p>
+                        <p className="text-center text-slate-300 text-sm">Free shipping on all premium items.</p>
                     </div>
                 </div>
             </div>

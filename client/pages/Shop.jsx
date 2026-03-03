@@ -33,7 +33,7 @@ const Shop = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
                 <div>
                     <h1 className="text-5xl font-extrabold mb-2">Our Collection</h1>
-                    <p className="text-white/40">Discover excellence in every detail.</p>
+                    <p className="text-slate-400">Discover excellence in every detail.</p>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
@@ -41,7 +41,7 @@ const Shop = () => {
                         <button
                             key={c}
                             onClick={() => setCategory(c)}
-                            className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${category === c ? "bg-primary text-white" : "glass hover:bg-white/10"
+                            className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${category === c ? "bg-primary text-white" : "bg-slate-50 border border-slate-100 hover:bg-slate-100"
                                 }`}
                         >
                             {c}
@@ -53,7 +53,7 @@ const Shop = () => {
             {loading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                        <div key={i} className="glass-card h-80 animate-pulse bg-white/5"></div>
+                        <div key={i} className="glass-card h-80 animate-pulse bg-slate-100"></div>
                     ))}
                 </div>
             ) : products.length > 0 ? (
@@ -64,7 +64,7 @@ const Shop = () => {
                 </div>
             ) : (
                 <div className="text-center py-40 glass-card">
-                    <p className="text-white/40 text-lg">No products found in this category.</p>
+                    <p className="text-slate-400 text-lg">No products found in this category.</p>
                 </div>
             )}
         </div>

@@ -6,12 +6,23 @@ import Register from "../pages/Register";
 import Cart from "../pages/Cart";
 import Checkout from "../pages/Checkout";
 import ProductDetails from "../pages/ProductDetails";
+import Profile from "../pages/Profile";
+import AdminDashboard from "../pages/AdminDashboard";
+import AdminSettings from "../pages/AdminSettings";
+import AdminProducts from "../pages/AdminProducts";
+import AdminOrders from "../pages/AdminOrders";
 import { useAuth } from "../context/AuthContext";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return null;
   return user ? children : <Navigate to="/login" />;
+};
+
+const AdminRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  return user && user.role === "admin" ? children : <Navigate to="/" />;
 };
 
 const AppRoutes = () => {
@@ -24,6 +35,11 @@ const AppRoutes = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
+      <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
+      <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
     </Routes>
   );
 };

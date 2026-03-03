@@ -28,7 +28,7 @@ const Register = () => {
             <div className="glass-card p-10 space-y-8">
                 <div className="text-center">
                     <h2 className="text-3xl font-bold gradient-text">Create Account</h2>
-                    <p className="text-white/40 mt-2">Join Shopkart community today</p>
+                    <p className="text-slate-400 mt-2">Join Shopkart community today</p>
                 </div>
 
                 {error && <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl text-sm">{error}</div>}
@@ -36,7 +36,7 @@ const Register = () => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-4">
                         <div>
-                            <label className="text-sm font-medium text-white/70 ml-1">Full Name</label>
+                            <label className="text-sm font-medium text-slate-600 ml-1">Full Name</label>
                             <input
                                 type="text"
                                 required
@@ -47,7 +47,7 @@ const Register = () => {
                             />
                         </div>
                         <div>
-                            <label className="text-sm font-medium text-white/70 ml-1">Email Address</label>
+                            <label className="text-sm font-medium text-slate-600 ml-1">Email Address</label>
                             <input
                                 type="email"
                                 required
@@ -58,7 +58,7 @@ const Register = () => {
                             />
                         </div>
                         <div>
-                            <label className="text-sm font-medium text-white/70 ml-1">Phone Number</label>
+                            <label className="text-sm font-medium text-slate-600 ml-1">Phone Number</label>
                             <input
                                 type="text"
                                 required
@@ -69,7 +69,7 @@ const Register = () => {
                             />
                         </div>
                         <div>
-                            <label className="text-sm font-medium text-white/70 ml-1">Password</label>
+                            <label className="text-sm font-medium text-slate-600 ml-1">Password</label>
                             <input
                                 type="password"
                                 required
@@ -86,7 +86,7 @@ const Register = () => {
                     </button>
                 </form>
 
-                <p className="text-center text-white/40">
+                <p className="text-center text-slate-400">
                     Already have an account?{" "}
                     <Link to="/login" className="text-primary hover:underline">Sign in</Link>
                 </p>

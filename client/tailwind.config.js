@@ -12,10 +12,10 @@ export default {
     extend: {
       colors: {
         primary: "#8B5CF6",
-        background: "#030711",
-        card: "#0F172A",
-        foreground: "#F1F5F9",
-        border: "#1E293B",
+        background: "#FFFFFF",
+        card: "#F8FAFC",
+        foreground: "#0F172A",
+        border: "#E2E8F0",
       },
     },
   },

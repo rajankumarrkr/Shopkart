@@ -17,6 +17,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const authRoutes = require("./routes/authRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+
 app.use("/api/auth", authRoutes);
 app.get("/api/protected", protect, (req, res) => {
   res.json({
@@ -27,6 +29,7 @@ app.get("/api/protected", protect, (req, res) => {
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.get("/", (req, res) => {
   res.send("Shopkart API is running...");

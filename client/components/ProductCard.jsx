@@ -20,14 +20,14 @@ const ProductCard = ({ product }) => {
             </div>
             <div className="flex-grow">
                 <h3 className="text-lg font-bold mb-1 line-clamp-1">{product.title}</h3>
-                <p className="text-white/50 text-xs mb-3 line-clamp-2">{product.description}</p>
+                <p className="text-slate-500 text-xs mb-3 line-clamp-2">{product.description}</p>
             </div>
             <div className="flex items-center justify-between mt-auto">
                 <div className="flex flex-col">
                     {product.discountPrice ? (
                         <>
                             <span className="text-primary font-bold">${product.discountPrice}</span>
-                            <span className="text-white/30 text-xs line-through">${product.price}</span>
+                            <span className="text-slate-400 text-xs line-through">${product.price}</span>
                         </>
                     ) : (
                         <span className="text-primary font-bold">${product.price}</span>
