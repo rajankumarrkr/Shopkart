@@ -24,7 +24,7 @@ const Cart = () => {
                                     <div>
                                         <h3 className="text-lg font-bold">{item.title}</h3>
                                         <p className="text-slate-400 text-sm">Qty: {item.qty}</p>
-                                        <p className="text-primary font-bold mt-1">${item.price}</p>
+                                        <p className="text-primary font-bold mt-1">₹{item.price}</p>
                                     </div>
                                 </div>
                                 <button
@@ -46,7 +46,7 @@ const Cart = () => {
                             <div className="space-y-4 mb-8">
                                 <div className="flex justify-between text-slate-500">
                                     <span>Subtotal</span>
-                                    <span>${cartTotal}</span>
+                                    <span>₹{cartTotal}</span>
                                 </div>
                                 <div className="flex justify-between text-slate-500">
                                     <span>Shipping</span>
@@ -54,7 +54,7 @@ const Cart = () => {
                                 </div>
                                 <div className="border-t border-slate-100 pt-4 flex justify-between font-bold text-lg">
                                     <span>Total</span>
-                                    <span className="text-primary">${cartTotal}</span>
+                                    <span className="text-primary">₹{cartTotal}</span>
                                 </div>
                             </div>
                             <Link to="/checkout" className="btn-primary w-full block text-center py-4">

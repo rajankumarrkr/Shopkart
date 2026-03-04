@@ -207,15 +207,15 @@ const Checkout = () => {
                         <h2 className="text-xl font-bold mb-8">Order Summary</h2>
                         <div className="space-y-4 mb-8">
                             {cartItems.map((item) => (
-                                <div key={item.product._id} className="flex justify-between text-sm">
-                                    <span className="text-slate-500 truncate mr-4">{item.product.title} <span className="text-xs text-slate-400">×{item.quantity}</span></span>
-                                    <span className="font-bold">${item.product.price * item.quantity}</span>
+                                <div key={item._id} className="flex justify-between text-sm">
+                                    <span className="text-slate-500 truncate mr-4">{item.title} <span className="text-xs text-slate-400">×{item.qty}</span></span>
+                                    <span className="font-bold">₹{item.price * item.qty}</span>
                                 </div>
                             ))}
                         </div>
                         <div className="border-t border-slate-100 pt-6 flex justify-between items-center">
                             <span className="text-lg font-bold">Payable Amount</span>
-                            <span className="text-3xl font-black text-primary">${cartTotal}</span>
+                            <span className="text-3xl font-black text-primary">₹{cartTotal}</span>
                         </div>
                         <div className="mt-8 flex items-center gap-3 p-4 bg-emerald-50 text-emerald-600 rounded-2xl border border-emerald-100">
                             <span className="text-xl">🔒</span>

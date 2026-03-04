@@ -22,7 +22,16 @@ const ProtectedRoute = ({ children }) => {
 const AdminRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return null;
-  return user && user.role === "admin" ? children : <Navigate to="/" />;
+
+  console.log("AdminRoute - User:", user);
+  console.log("AdminRoute - Role:", user?.role);
+
+  if (user && user.role === "admin") {
+    return children;
+  }
+
+  console.warn("Access denied. Redirecting to home.");
+  return <Navigate to="/" />;
 };
 
 const AppRoutes = () => {

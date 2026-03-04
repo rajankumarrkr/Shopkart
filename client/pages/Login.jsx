@@ -12,8 +12,12 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await login(email, password);
-            navigate("/");
+            const { user } = await login(email, password);
+            if (user.role === "admin") {
+                navigate("/admin");
+            } else {
+                navigate("/");
+            }
         } catch (err) {
             setError(err.response?.data?.message || "Login failed");
         }
@@ -34,10 +38,10 @@ const Login = () => {
                         <div>
                             <label className="text-sm font-medium text-slate-600 ml-1">Email Address</label>
                             <input
-                                type="email"
+                                type="text"
                                 required
                                 className="input-field mt-1"
-                                placeholder="you@example.com"
+                                placeholder="Email or Username"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />

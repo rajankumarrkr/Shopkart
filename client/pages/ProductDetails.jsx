@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import API from "../api/api";
 import { useCart } from "../context/CartContext";
 
@@ -8,6 +8,12 @@ const ProductDetails = () => {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const { addToCart } = useCart();
+    const navigate = useNavigate();
+
+    const handleBuyNow = () => {
+        addToCart(product);
+        navigate("/checkout");
+    };
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -57,22 +63,30 @@ const ProductDetails = () => {
                     <p className="text-slate-600 text-lg mb-10 leading-relaxed">{product.description}</p>
 
                     <div className="flex items-center gap-6 mb-12">
-                        <span className="text-4xl font-black gradient-text">${product.discountPrice || product.price}</span>
+                        <span className="text-4xl font-black gradient-text">₹{product.discountPrice || product.price}</span>
                         {product.discountPrice && (
-                            <span className="text-2xl text-slate-200 line-through">${product.price}</span>
+                            <span className="text-2xl text-slate-200 line-through">₹{product.price}</span>
                         )}
                     </div>
 
                     <div className="space-y-4">
-                        <button
-                            onClick={() => addToCart(product)}
-                            className="btn-primary w-full py-5 text-xl flex items-center justify-center gap-3"
-                        >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                            </svg>
-                            Add to Bags
-                        </button>
+                        <div className="grid grid-cols-2 gap-4">
+                            <button
+                                onClick={() => addToCart(product)}
+                                className="btn-secondary w-full py-5 text-xl flex items-center justify-center gap-3 border-2 border-primary/20"
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                </svg>
+                                Add to Bag
+                            </button>
+                            <button
+                                onClick={handleBuyNow}
+                                className="btn-primary w-full py-5 text-xl flex items-center justify-center gap-3 shadow-2xl shadow-primary/20"
+                            >
+                                Buy Now
+                            </button>
+                        </div>
                         <p className="text-center text-slate-300 text-sm">Free shipping on all premium items.</p>
                     </div>
                 </div>
