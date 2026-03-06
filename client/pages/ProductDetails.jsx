@@ -40,17 +40,16 @@ const ProductDetails = () => {
     if (!product) return <div className="container mx-auto px-4 py-40 text-center text-slate-400">Product not found.</div>;
 
     return (
-        <div className="container mx-auto px-4 py-12">
+        <div className="container mx-auto px-4 py-8 md:py-20 animate-fade-up">
             <Link to="/shop" className="text-slate-400 hover:text-primary mb-8 inline-flex items-center gap-2 transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
                 Back to Shop
             </Link>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mt-8">
-                {/* Images */}
-                <div className="space-y-4">
+            <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
+                {/* Left: Images */}
+                <div className="w-full lg:w-1/2 space-y-6">
                     <div className="glass-card aspect-square overflow-hidden rounded-3xl group relative">
                         <img src={mainImage} alt={product.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
@@ -68,13 +67,17 @@ const ProductDetails = () => {
                     </div>
                 </div>
 
-                {/* Info */}
-                <div className="flex flex-col justify-center">
-                    <span className="text-primary font-bold tracking-widest text-sm uppercase mb-4">{product.category}</span>
-                    <h1 className="text-5xl font-black mb-6">{product.title}</h1>
-                    <p className="text-slate-600 text-lg mb-10 leading-relaxed">{product.description}</p>
+                {/* Right: Info */}
+                <div className="w-full lg:w-1/2 space-y-8 lg:pt-4">
+                    <div>
+                        <span className="text-primary font-black uppercase tracking-[0.2em] text-[10px] md:text-xs bg-primary/5 px-4 py-1.5 rounded-full border border-primary/10">
+                            {product.category}
+                        </span>
+                        <h1 className="text-4xl md:text-6xl font-black text-slate-900 mt-6 leading-tight">{product.title}</h1>
+                    </div>
+                    <p className="text-slate-600 text-lg leading-relaxed">{product.description}</p>
 
-                    <div className="flex items-center gap-6 mb-12">
+                    <div className="flex items-center gap-6">
                         <span className="text-4xl font-black gradient-text">₹{product.discountPrice || product.price}</span>
                         {product.discountPrice && (
                             <span className="text-2xl text-slate-200 line-through">₹{product.price}</span>
@@ -82,21 +85,18 @@ const ProductDetails = () => {
                     </div>
 
                     <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <button
                                 onClick={() => addToCart(product)}
-                                className="btn-secondary w-full py-5 text-xl flex items-center justify-center gap-3 border-2 border-primary/20"
+                                className="btn-secondary py-4 px-8 rounded-2xl font-black text-sm md:text-base border-2 border-primary/10 hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
                             >
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                                </svg>
-                                Add to Bag
+                                <span>Add to Cart</span>
                             </button>
                             <button
                                 onClick={handleBuyNow}
-                                className="btn-primary w-full py-5 text-xl flex items-center justify-center gap-3 shadow-2xl shadow-primary/20"
+                                className="btn-primary py-4 px-8 rounded-2xl font-black text-sm md:text-base shadow-2xl shadow-blue-500/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
                             >
-                                Buy Now
+                                <span>Buy Now</span>
                             </button>
                         </div>
                         <p className="text-center text-slate-300 text-sm">Free shipping on all premium items.</p>

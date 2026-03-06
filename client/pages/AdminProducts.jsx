@@ -162,7 +162,7 @@ const AdminProducts = () => {
             </div>
 
             {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
                     {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
                         <div key={i} className="h-80 glass-card animate-pulse">
                             <div className="h-48 bg-slate-100/50 rounded-xl m-4"></div>
@@ -172,7 +172,7 @@ const AdminProducts = () => {
                     ))}
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
                     {products.map((product) => (
                         <div key={product._id} className="glass-card flex flex-col group p-4 hover:border-primary/30 transition-all duration-500">
                             <div className="aspect-square rounded-2xl overflow-hidden mb-6 relative bg-slate-50">
@@ -226,12 +226,12 @@ const AdminProducts = () => {
             )}
 
             {showModal && (
-                <div className="fixed inset-0 z-[100] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-300">
-                    <div className="glass-card max-w-2xl w-full p-0 max-h-[90vh] overflow-hidden flex flex-col shadow-3xl animate-in slide-in-from-bottom-8 duration-500">
-                        <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-white/50">
+                <div className="fixed inset-0 z-[100] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-2 md:p-4 animate-in fade-in duration-300">
+                    <div className="glass-card max-w-2xl w-[95vw] md:w-full p-0 max-h-[95vh] overflow-hidden flex flex-col shadow-3xl animate-in slide-in-from-bottom-8 duration-500">
+                        <div className="p-6 md:p-8 border-b border-slate-100 flex justify-between items-center bg-white/50">
                             <div>
-                                <h2 className="text-3xl font-black text-slate-900">{editingProduct ? "Edit Product" : "New Creation"}</h2>
-                                <p className="text-slate-400 text-sm font-medium mt-1">Fill in the details for your masterpiece</p>
+                                <h2 className="text-2xl md:text-3xl font-black text-slate-900">{editingProduct ? "Edit Product" : "New Creation"}</h2>
+                                <p className="text-slate-400 text-xs md:text-sm font-medium mt-1">Fill in the details for your masterpiece</p>
                             </div>
                             <button
                                 onClick={() => setShowModal(false)}
@@ -243,7 +243,7 @@ const AdminProducts = () => {
                             </button>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="p-8 overflow-y-auto space-y-8">
+                        <form onSubmit={handleSubmit} className="p-6 md:p-8 overflow-y-auto space-y-6 md:space-y-8">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Product Title</label>

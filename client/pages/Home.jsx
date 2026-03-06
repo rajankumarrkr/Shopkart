@@ -19,15 +19,15 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="space-y-20 pb-20">
+    <div className="space-y-16 md:space-y-24 pb-20 pt-20 md:pt-0">
       {/* Hero Section */}
       <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-transparent z-0"></div>
         <div className="container mx-auto px-4 z-10 text-center animate-fade-up">
-          <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tight">
+          <h1 className="text-5xl md:text-8xl font-black mb-6 tracking-tight leading-tight md:leading-none">
             Elevate Your <span className="gradient-text">Lifestyle.</span>
           </h1>
-          <p className="text-slate-600 text-xl md:text-2xl max-w-2xl mx-auto mb-10 font-light">
+          <p className="text-slate-500 text-lg md:text-2xl max-w-2xl mx-auto mb-10 font-medium leading-relaxed px-4 md:px-0">
             Discover a curated collection of premium products designed for the modern individual.
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
@@ -43,12 +43,14 @@ const Home = () => {
 
       {/* Featured Products */}
       <section className="container mx-auto px-4">
-        <div className="flex items-end justify-between mb-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
-            <h2 className="text-4xl font-bold mb-2">Featured Products</h2>
-            <p className="text-slate-400">Handpicked for exceptional quality.</p>
+            <h2 className="text-3xl md:text-4xl font-black mb-2">Featured Products</h2>
+            <p className="text-slate-400 font-medium">Handpicked for exceptional quality.</p>
           </div>
-          <Link to="/shop" className="text-primary font-semibold hover:underline">View All &rarr;</Link>
+          <Link to="/shop" className="text-primary font-bold hover:underline group flex items-center gap-2">
+            View All <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -66,23 +68,23 @@ const Home = () => {
 
       {/* Categories / Teaser */}
       <section className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="glass-card h-96 flex flex-col justify-end p-10 relative overflow-hidden group">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <div className="glass-card h-80 md:h-96 flex flex-col justify-end p-6 md:p-10 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
             <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Tech" />
             <div className="z-20">
-              <h3 className="text-3xl font-bold mb-2">Premium Tech</h3>
-              <p className="text-slate-200/90 mb-6">Upgrade your workspace with our latest arrivals.</p>
-              <Link to="/shop?category=tech" className="btn-primary py-2 px-6 text-sm inline-block">Explore</Link>
+              <h3 className="text-2xl md:text-3xl font-bold mb-2">Premium Tech</h3>
+              <p className="text-slate-200/90 text-sm md:text-base mb-6">Upgrade your workspace with our latest arrivals.</p>
+              <Link to="/shop?category=tech" className="btn-primary py-2.5 px-6 text-xs md:text-sm inline-block">Explore</Link>
             </div>
           </div>
-          <div className="glass-card h-96 flex flex-col justify-end p-10 relative overflow-hidden group">
+          <div className="glass-card h-80 md:h-96 flex flex-col justify-end p-6 md:p-10 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
             <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Fashion" />
             <div className="z-20">
-              <h3 className="text-3xl font-bold mb-2">Urban Style</h3>
-              <p className="text-white/60 mb-6">Redefine your wardrobe with minimalist fashion.</p>
-              <Link to="/shop?category=fashion" className="btn-primary py-2 px-6 text-sm inline-block">Explore</Link>
+              <h3 className="text-2xl md:text-3xl font-bold mb-2">Urban Style</h3>
+              <p className="text-white/60 text-sm md:text-base mb-6">Redefine your wardrobe with minimalist fashion.</p>
+              <Link to="/shop?category=fashion" className="btn-primary py-2.5 px-6 text-xs md:text-sm inline-block">Explore</Link>
             </div>
           </div>
         </div>

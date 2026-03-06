@@ -28,29 +28,29 @@ const ProductCard = ({ product }) => {
                 <h3 className="text-lg font-bold mb-1 line-clamp-1">{product.title}</h3>
                 <p className="text-slate-500 text-xs mb-3 line-clamp-2">{product.description}</p>
             </div>
-            <div className="flex items-center justify-between mt-auto">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-auto gap-3">
                 <div className="flex flex-col">
                     {product.discountPrice ? (
                         <>
-                            <span className="text-primary font-bold">₹{product.discountPrice}</span>
-                            <span className="text-slate-400 text-xs line-through">₹{product.price}</span>
+                            <span className="text-primary font-black text-lg">₹{product.discountPrice}</span>
+                            <span className="text-slate-400 text-[10px] line-through">₹{product.price}</span>
                         </>
                     ) : (
-                        <span className="text-primary font-bold">₹{product.price}</span>
+                        <span className="text-primary font-black text-lg">₹{product.price}</span>
                     )}
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full sm:w-auto">
                     <button
                         onClick={() => addToCart(product)}
-                        className="btn-secondary p-2 rounded-lg text-xs flex items-center gap-1 border border-primary/20"
+                        className="btn-secondary flex-1 sm:px-4 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 border border-primary/20"
                     >
                         Add
                     </button>
                     <button
                         onClick={handleBuyNow}
-                        className="btn-primary p-2 rounded-lg text-xs flex items-center gap-1 shadow-lg shadow-primary/20"
+                        className="btn-primary flex-1 sm:px-4 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 shadow-lg shadow-primary/10"
                     >
-                        Buy Now
+                        Buy
                     </button>
                 </div>
             </div>

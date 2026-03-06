@@ -140,8 +140,8 @@ const Checkout = () => {
 
                     {step === 1 ? (
                         /* SECTION 1: SHIPPING DETAILS */
-                        <form onSubmit={handleShippingSubmit} className="glass-card p-10 space-y-8 animate-fade-right">
-                            <h2 className="text-xl font-bold border-b border-slate-100 pb-4">1. Shipping Details</h2>
+                        <form onSubmit={handleShippingSubmit} className="glass-card p-6 md:p-10 space-y-6 md:space-y-8 animate-fade-right">
+                            <h2 className="text-lg md:text-xl font-bold border-b border-slate-100 pb-4">1. Shipping Details</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Full Name</label>
@@ -178,8 +178,8 @@ const Checkout = () => {
                     ) : (
                         /* SECTION 2: PAYMENT OPTIONS */
                         <form onSubmit={handlePaymentSubmit} className="space-y-8 animate-fade-up">
-                            <div className="glass-card p-10 bg-primary/[0.02] border-primary/10">
-                                <h2 className="text-xl font-bold mb-6">2. Scan & Pay</h2>
+                            <div className="glass-card p-6 md:p-10 bg-primary/[0.02] border-primary/10">
+                                <h2 className="text-lg md:text-xl font-bold mb-6">2. Scan & Pay</h2>
 
                                 <div className="flex flex-col sm:flex-row gap-8 items-center bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                                     <div className="w-48 h-48 bg-white p-4 rounded-3xl shadow-xl border border-slate-100 flex items-center justify-center shrink-0">
@@ -210,8 +210,8 @@ const Checkout = () => {
                                 </div>
                             </div>
 
-                            <div className="glass-card p-10 space-y-8">
-                                <h2 className="text-xl font-bold">Upload Verification</h2>
+                            <div className="glass-card p-6 md:p-10 space-y-6 md:space-y-8">
+                                <h2 className="text-lg md:text-xl font-bold">Upload Verification</h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     <div>
                                         <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2">Transaction ID / UTR No. *</label>
@@ -262,8 +262,8 @@ const Checkout = () => {
                 </div>
 
                 <div className="lg:col-span-1">
-                    <div className="glass-card p-10 sticky top-24">
-                        <h2 className="text-xl font-bold mb-8">Order Summary</h2>
+                    <div className="glass-card p-6 md:p-10 sticky top-24">
+                        <h2 className="text-lg md:text-xl font-bold mb-6 md:mb-8">Order Summary</h2>
                         <div className="space-y-4 mb-8">
                             {finalItems.map((item) => (
                                 <div key={item._id} className="flex justify-between text-sm">
