@@ -116,7 +116,7 @@ const Profile = () => {
                                 </div>
                                 <div>
                                     <p className="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-1">Amount</p>
-                                    <p className="text-sm font-black text-primary">${order.totalAmount}</p>
+                                    <p className="text-sm font-black text-primary">₹{order.totalAmount}</p>
                                 </div>
                                 <div className="flex gap-2">
                                     <span className={`px-3 py-1 rounded-full text-[10px] font-bold border ${getStatusColor(order.paymentStatus)}`}>
@@ -137,7 +137,7 @@ const Profile = () => {
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-sm font-bold truncate">{item.product?.title}</p>
-                                                <p className="text-xs text-slate-500">Qty: {item.quantity} × ${item.price}</p>
+                                                <p className="text-xs text-slate-500">Qty: {item.quantity} × ₹{item.price}</p>
                                             </div>
                                         </div>
                                     ))}

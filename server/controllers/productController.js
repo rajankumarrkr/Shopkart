@@ -13,6 +13,7 @@ exports.createProduct = async (req, res) => {
       discountPrice,
       category,
       stock,
+      images: bodyImages,
     } = req.body;
 
     if (!title || !description || !price || !category || !stock) {
@@ -21,8 +22,7 @@ exports.createProduct = async (req, res) => {
 
     let imageUrls = [];
 
-
-    // Correct upload logic using Promise wrapper
+    // Handle file uploads if present
     if (req.files && req.files.length > 0) {
       for (let file of req.files) {
         const uploadResult = await new Promise((resolve, reject) => {
@@ -38,6 +38,10 @@ exports.createProduct = async (req, res) => {
 
         imageUrls.push(uploadResult.secure_url);
       }
+    }
+    // Fallback to body images if no files were uploaded
+    else if (bodyImages) {
+      imageUrls = Array.isArray(bodyImages) ? bodyImages : [bodyImages];
     }
 
     const product = await Product.create({
@@ -64,7 +68,19 @@ exports.createProduct = async (req, res) => {
  */
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.find().sort({ createdAt: -1 });
+    const { category, limit } = req.query;
+    let query = {};
+    if (category && category.toLowerCase() !== "all") {
+      query.category = new RegExp(`^${category}$`, "i"); // Case-insensitive exact match
+    }
+
+    let productQuery = Product.find(query).sort({ createdAt: -1 });
+
+    if (limit) {
+      productQuery = productQuery.limit(parseInt(limit));
+    }
+
+    const products = await productQuery;
 
     res.status(200).json(products);
   } catch (error) {
@@ -98,6 +114,25 @@ exports.updateProduct = async (req, res) => {
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Handle file uploads if present
+    if (req.files && req.files.length > 0) {
+      let imageUrls = [];
+      for (let file of req.files) {
+        const uploadResult = await new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: "shopkart_products" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          );
+          stream.end(file.buffer);
+        });
+        imageUrls.push(uploadResult.secure_url);
+      }
+      req.body.images = imageUrls;
     }
 
     Object.assign(product, req.body);

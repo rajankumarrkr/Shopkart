@@ -58,7 +58,7 @@ const AdminDashboard = () => {
                 </div>
                 <div className="glass-card p-10 border-b-4 border-primary">
                     <p className="text-slate-400 font-bold uppercase tracking-widest text-xs mb-2">Total Revenue</p>
-                    <p className="text-5xl font-black text-primary">{loading ? "..." : `$${stats.revenue.toLocaleString()}`}</p>
+                    <p className="text-5xl font-black text-primary">{loading ? "..." : `₹${stats.revenue.toLocaleString()}`}</p>
                     <p className="text-xs text-slate-400 mt-4">Approved payments</p>
                 </div>
             </div>

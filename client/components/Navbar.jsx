@@ -5,6 +5,7 @@ import { useCart } from "../context/CartContext";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [showUserMenu, setShowUserMenu] = useState(false);
     const { user, logout } = useAuth();
     const { cartItems } = useCart();
 
@@ -32,16 +33,60 @@ const Navbar = () => {
                                 )}
                             </Link>
                             {user ? (
-                                <div className="flex items-center space-x-4">
-                                    <span className="text-slate-600 text-sm">Hi, {user.name}</span>
-                                    {user.role === "admin" && (
-                                        <Link to="/admin" className="nav-link font-bold text-primary">Admin</Link>
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setShowUserMenu(!showUserMenu)}
+                                        className="flex items-center space-x-3 p-1.5 rounded-2xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100"
+                                    >
+                                        <div className="w-9 h-9 bg-primary/10 text-primary rounded-xl flex items-center justify-center font-bold text-sm">
+                                            {user.name.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div className="text-left hidden lg:block">
+                                            <p className="text-xs font-bold text-slate-800 leading-none mb-0.5">{user.name}</p>
+                                            <p className="text-[10px] text-slate-400 font-medium">Customer</p>
+                                        </div>
+                                        <svg className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${showUserMenu ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
+
+                                    {/* User Dropdown */}
+                                    {showUserMenu && (
+                                        <>
+                                            <div className="fixed inset-0 z-10" onClick={() => setShowUserMenu(false)}></div>
+                                            <div className="absolute right-0 mt-3 w-56 glass-card p-2 shadow-2xl animate-fade-in z-20">
+                                                <div className="px-3 py-2 border-b border-slate-100 mb-2">
+                                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Account</p>
+                                                </div>
+                                                <Link to="/profile" onClick={() => setShowUserMenu(false)} className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-primary/5 text-slate-600 hover:text-primary transition-colors group">
+                                                    <span className="text-lg">👤</span>
+                                                    <span className="text-sm font-bold">My Profile</span>
+                                                </Link>
+                                                <Link to="/profile" onClick={() => setShowUserMenu(false)} className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-primary/5 text-slate-600 hover:text-primary transition-colors group">
+                                                    <span className="text-lg">📦</span>
+                                                    <span className="text-sm font-bold">Order Status</span>
+                                                </Link>
+                                                {user.role === "admin" && (
+                                                    <Link to="/admin" onClick={() => setShowUserMenu(false)} className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-primary/5 text-primary transition-colors">
+                                                        <span className="text-lg">🛡️</span>
+                                                        <span className="text-sm font-black">Admin Panel</span>
+                                                    </Link>
+                                                )}
+                                                <div className="border-t border-slate-100 mt-2 pt-2">
+                                                    <button
+                                                        onClick={() => { logout(); setShowUserMenu(false); }}
+                                                        className="flex items-center space-x-3 w-full px-3 py-2.5 rounded-xl hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors"
+                                                    >
+                                                        <span className="text-lg">🚪</span>
+                                                        <span className="text-sm font-bold">Logout</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </>
                                     )}
-                                    <Link to="/profile" className="nav-link">My Orders</Link>
-                                    <button onClick={logout} className="btn-secondary py-1.5 px-4 text-sm">Logout</button>
                                 </div>
                             ) : (
-                                <Link to="/login" className="btn-primary py-1.5 px-6 text-sm">Login</Link>
+                                <Link to="/login" className="btn-primary py-2 px-8 text-sm shadow-xl shadow-primary/20">Login</Link>
                             )}
                         </div>
                     </div>

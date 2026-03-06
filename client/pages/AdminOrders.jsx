@@ -62,13 +62,13 @@ const AdminOrders = () => {
                                         <p className="text-xs text-slate-500 mt-1">{order.user?.name} | {order.user?.email}</p>
                                     </td>
                                     <td className="p-6">
-                                        <p className="font-black text-primary">${order.totalAmount}</p>
+                                        <p className="font-black text-primary">₹{order.totalAmount}</p>
                                     </td>
                                     <td className="p-6">
                                         <div className="flex flex-col gap-1">
                                             <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border inline-block w-fit ${order.paymentStatus === "Approved" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                                                    order.paymentStatus === "Rejected" ? "bg-red-50 text-red-600 border-red-100" :
-                                                        "bg-amber-50 text-amber-600 border-amber-100"
+                                                order.paymentStatus === "Rejected" ? "bg-red-50 text-red-600 border-red-100" :
+                                                    "bg-amber-50 text-amber-600 border-amber-100"
                                                 }`}>
                                                 Pay: {order.paymentStatus}
                                             </span>
@@ -96,8 +96,11 @@ const AdminOrders = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                             <div>
-                                <h2 className="text-2xl font-black mb-8 underline decoration-primary decoration-4 underline-offset-8">Payment Screenshot</h2>
-                                <div className="aspect-[3/4] bg-slate-100 rounded-3xl overflow-hidden border border-slate-200">
+                                <h2 className="text-xl font-black mb-6 flex items-center gap-2">
+                                    <span className="text-primary text-2xl">💳</span>
+                                    Payment Evidence
+                                </h2>
+                                <div className="aspect-[3/4] bg-slate-200/50 rounded-3xl overflow-hidden border border-slate-100 shadow-inner group relative">
                                     {selectedOrder.paymentScreenshot ? (
                                         <img src={selectedOrder.paymentScreenshot} alt="Proof" className="w-full h-full object-contain" />
                                     ) : (
@@ -109,40 +112,74 @@ const AdminOrders = () => {
                                 </p>
                             </div>
 
-                            <div className="flex flex-col">
-                                <h2 className="text-2xl font-black mb-8 underline decoration-primary decoration-4 underline-offset-8">Order Summary</h2>
+                            <div className="space-y-8 flex-1 flex flex-col">
+                                <section>
+                                    <h2 className="text-xl font-black mb-6 flex items-center gap-2">
+                                        <span className="text-primary text-2xl">📦</span>
+                                        Order Summary
+                                        <span className={`ml-auto text-[10px] font-black uppercase px-2 py-1 rounded border ${selectedOrder.orderStatus === "Delivered" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                                            selectedOrder.orderStatus === "Cancelled" ? "bg-red-50 text-red-600 border-red-100" :
+                                                "bg-blue-50 text-blue-600 border-blue-100"
+                                            }`}>
+                                            Status: {selectedOrder.orderStatus}
+                                        </span>
+                                    </h2>
 
-                                <div className="flex-1 space-y-6">
-                                    {selectedOrder.items.map((item, idx) => (
-                                        <div key={idx} className="flex items-center gap-4">
-                                            <div className="w-16 h-16 rounded-xl bg-slate-100 overflow-hidden">
-                                                <img src={item.product?.images?.[0]} alt="" className="w-full h-full object-cover" />
+                                    <div className="space-y-4 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
+                                        {selectedOrder.items.map((item, idx) => (
+                                            <div key={idx} className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 border border-slate-100/50">
+                                                <div className="w-14 h-14 rounded-xl bg-white border border-slate-100 overflow-hidden shadow-sm">
+                                                    <img src={item.product?.images?.[0]} alt="" className="w-full h-full object-cover" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="font-bold text-sm text-slate-800 line-clamp-1">{item.product?.title}</p>
+                                                    <p className="text-[11px] text-slate-500 font-medium">Qty: {item.quantity} × ₹{item.price}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="font-bold text-primary text-sm">₹{item.quantity * item.price}</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <p className="font-bold text-sm">{item.product?.title}</p>
-                                                <p className="text-xs text-slate-500">Qty: {item.quantity} × ${item.price}</p>
-                                            </div>
+                                        ))}
+                                    </div>
+                                </section>
+
+                                <section className="bg-slate-50/50 p-6 rounded-3xl border border-slate-100">
+                                    <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">📍 Shipping Details</h2>
+                                    <div className="grid grid-cols-2 gap-y-4 gap-x-6">
+                                        <div>
+                                            <p className="text-[10px] uppercase font-bold text-slate-400">Recipient</p>
+                                            <p className="text-sm font-bold text-slate-800">{selectedOrder.shippingAddress?.fullName || "N/A"}</p>
                                         </div>
-                                    ))}
-                                </div>
+                                        <div>
+                                            <p className="text-[10px] uppercase font-bold text-slate-400">Contact</p>
+                                            <p className="text-sm font-bold text-slate-800">{selectedOrder.shippingAddress?.phone || "N/A"}</p>
+                                        </div>
+                                        <div className="col-span-2">
+                                            <p className="text-[10px] uppercase font-bold text-slate-400">Address</p>
+                                            <p className="text-sm font-bold text-slate-800 leading-relaxed">
+                                                {selectedOrder.shippingAddress?.address}, {selectedOrder.shippingAddress?.city}, {selectedOrder.shippingAddress?.state} - {selectedOrder.shippingAddress?.pincode}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </section>
 
-                                <div className="mt-12 bg-slate-50 p-8 rounded-3xl border border-slate-100 space-y-6">
+                                <div className="mt-auto bg-slate-900 text-white p-8 rounded-3xl shadow-2xl shadow-slate-200 space-y-6">
                                     <div className="flex justify-between items-center text-2xl">
-                                        <span className="font-bold">Total Amount</span>
-                                        <span className="font-black text-primary">${selectedOrder.totalAmount}</span>
+                                        <span className="font-bold text-white/60 text-lg uppercase tracking-tight">Total Amount</span>
+                                        <span className="font-black text-white">₹{selectedOrder.totalAmount}</span>
                                     </div>
 
                                     {selectedOrder.paymentStatus === "Verification Pending" && (
-                                        <div className="grid grid-cols-2 gap-4 pt-4">
+                                        <div className="grid grid-cols-2 gap-4 pt-2">
                                             <button
                                                 onClick={() => handleAction(selectedOrder._id, "approve")}
-                                                className="bg-emerald-500 text-white font-bold py-4 rounded-2xl hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20"
+                                                className="bg-emerald-500 text-white font-bold py-4 rounded-2xl hover:bg-emerald-600 transition-all active:scale-95 shadow-lg shadow-emerald-500/20"
                                             >
                                                 ✅ Approve
                                             </button>
                                             <button
                                                 onClick={() => handleAction(selectedOrder._id, "reject")}
-                                                className="bg-red-500 text-white font-bold py-4 rounded-2xl hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20"
+                                                className="bg-red-500 text-white font-bold py-4 rounded-2xl hover:bg-red-600 transition-all active:scale-95 shadow-lg shadow-red-500/20"
                                             >
                                                 ❌ Reject
                                             </button>

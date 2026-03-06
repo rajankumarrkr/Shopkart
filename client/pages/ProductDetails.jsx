@@ -11,8 +11,8 @@ const ProductDetails = () => {
     const navigate = useNavigate();
 
     const handleBuyNow = () => {
-        addToCart(product);
-        navigate("/checkout");
+        const item = { ...product, qty: 1 };
+        navigate("/checkout", { state: { directItem: item } });
     };
 
     useEffect(() => {

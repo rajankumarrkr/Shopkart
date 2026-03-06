@@ -161,7 +161,7 @@ const AdminProducts = () => {
                             <div className="px-2">
                                 <h3 className="font-bold text-slate-800 mb-1 truncate group-hover:text-primary transition-colors">{product.title}</h3>
                                 <div className="flex items-center justify-between mt-3">
-                                    <p className="text-2xl font-black text-slate-900">${product.price}</p>
+                                    <p className="text-2xl font-black text-slate-900">₹{product.price}</p>
                                     <span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${product.stock > 10 ? 'bg-emerald-50 text-emerald-600' : 'bg-orange-50 text-orange-600'}`}>
                                         {product.stock} IN STOCK
                                     </span>
@@ -204,7 +204,7 @@ const AdminProducts = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Price ($)</label>
+                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Price (₹)</label>
                                     <input
                                         type="number"
                                         required

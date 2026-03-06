@@ -1,6 +1,7 @@
 const Order = require("../models/Order");
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
+const cloudinary = require("../config/cloudinary");
 
 /**
  * Create Order From Cart
@@ -13,50 +14,70 @@ exports.createOrder = async (req, res) => {
       address,
       city,
       state,
-      pincode
+      pincode,
+      items,
+      totalAmount: clientTotal
     } = req.body;
 
-    if (!fullName || !phone || !address || !city || !state || !pincode) {
-      return res.status(400).json({ message: "Shipping details required" });
-    }
+    if (!fullName) return res.status(400).json({ message: "Full Name is required" });
+    if (!phone) return res.status(400).json({ message: "Phone Number is required" });
+    if (!address) return res.status(400).json({ message: "Address is required" });
+    if (!city) return res.status(400).json({ message: "City is required" });
+    if (!state) return res.status(400).json({ message: "State is required" });
+    if (!pincode) return res.status(400).json({ message: "Pincode is required" });
 
-    const cart = await Cart.findOne({ user: req.user._id })
-      .populate("items.product");
+    let orderItems = [];
+    let calculatedTotal = 0;
 
-    if (!cart || cart.items.length === 0) {
-      return res.status(400).json({ message: "Cart is empty" });
-    }
+    // 1. Check if items are provided in req.body (for localStorage carts)
+    if (items && Array.isArray(items) && items.length > 0) {
+      for (let item of items) {
+        const product = await Product.findById(item._id || item.product);
+        if (!product) {
+          return res.status(404).json({ message: `Product not found: ${item.title}` });
+        }
 
-    let totalAmount = 0;
+        const price = product.discountPrice || product.price;
+        const qty = item.qty || item.quantity || 1;
 
-    const orderItems = [];
+        calculatedTotal += price * qty;
+        orderItems.push({
+          product: product._id,
+          quantity: qty,
+          price: price
+        });
+      }
+    } else {
+      // 2. Fallback to database cart
+      const cart = await Cart.findOne({ user: req.user._id }).populate("items.product");
 
-    for (let item of cart.items) {
-      const product = await Product.findById(item.product._id);
-
-      if (!product) {
-        return res.status(404).json({ message: "Product not found" });
+      if (!cart || cart.items.length === 0) {
+        return res.status(400).json({ message: "No items in cart to create order" });
       }
 
-      if (product.stock < item.quantity) {
-        return res.status(400).json({
-          message: `Insufficient stock for ${product.title}`
+      for (let item of cart.items) {
+        if (!item.product) continue;
+        const price = item.product.discountPrice || item.product.price;
+        calculatedTotal += price * item.quantity;
+        orderItems.push({
+          product: item.product._id,
+          quantity: item.quantity,
+          price: price
         });
       }
 
-      totalAmount += product.price * item.quantity;
+      // Clear DB Cart
+      await Cart.findOneAndDelete({ user: req.user._id });
+    }
 
-      orderItems.push({
-        product: product._id,
-        quantity: item.quantity,
-        price: product.price
-      });
+    if (orderItems.length === 0) {
+      return res.status(400).json({ message: "Order must have at least one item" });
     }
 
     const order = await Order.create({
       user: req.user._id,
       items: orderItems,
-      totalAmount,
+      totalAmount: clientTotal || calculatedTotal,
       shippingAddress: {
         fullName,
         phone,
@@ -69,15 +90,13 @@ exports.createOrder = async (req, res) => {
       orderStatus: "Pending"
     });
 
-    // Clear Cart After Order Creation
-    await Cart.findOneAndDelete({ user: req.user._id });
-
     res.status(201).json({
       message: "Order created successfully",
       order
     });
 
   } catch (error) {
+    console.error("Create Order Error:", error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -91,7 +110,7 @@ exports.uploadPaymentProof = async (req, res) => {
     const { transactionId } = req.body;
 
     if (!transactionId) {
-      return res.status(400).json({ message: "Transaction ID required" });
+      return res.status(400).json({ message: "Transaction ID / UTR Number required" });
     }
 
     const order = await Order.findById(orderId);
@@ -104,23 +123,21 @@ exports.uploadPaymentProof = async (req, res) => {
       return res.status(403).json({ message: "Unauthorized access" });
     }
 
-    if (!req.file) {
-      return res.status(400).json({ message: "Payment screenshot required" });
+    // Upload screenshot if provided (optional)
+    if (req.file) {
+      const uploadResult = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "shopkart_payments" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.end(req.file.buffer);
+      });
+      order.paymentScreenshot = uploadResult.secure_url;
     }
 
-    // Upload screenshot to Cloudinary
-    const uploadResult = await new Promise((resolve, reject) => {
-      const stream = require("../config/cloudinary").uploader.upload_stream(
-        { folder: "shopkart_payments" },
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        }
-      );
-      stream.end(req.file.buffer);
-    });
-
-    order.paymentScreenshot = uploadResult.secure_url;
     order.transactionId = transactionId;
     order.paymentStatus = "Verification Pending";
 
