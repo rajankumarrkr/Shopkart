@@ -39,11 +39,11 @@ const Navbar = () => {
                                         className="flex items-center space-x-3 p-1.5 rounded-2xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100"
                                     >
                                         <div className="w-9 h-9 bg-primary/10 text-primary rounded-xl flex items-center justify-center font-bold text-sm">
-                                            {user.name.charAt(0).toUpperCase()}
+                                            {user?.name?.charAt(0).toUpperCase() || "U"}
                                         </div>
                                         <div className="text-left hidden lg:block">
-                                            <p className="text-xs font-bold text-slate-800 leading-none mb-0.5">{user.name}</p>
-                                            <p className="text-[10px] text-slate-400 font-medium">Customer</p>
+                                            <p className="text-xs font-bold text-slate-800 leading-none mb-0.5">{user?.name || "User"}</p>
+                                            <p className="text-[10px] text-slate-400 font-medium">{user?.role === "admin" ? "Administrator" : "Customer"}</p>
                                         </div>
                                         <svg className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${showUserMenu ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />

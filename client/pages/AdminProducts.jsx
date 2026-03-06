@@ -13,8 +13,11 @@ const AdminProducts = () => {
         price: "",
         category: "",
         stock: "",
-        imageUrl: ""
+        discountPrice: ""
     });
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [existingImages, setExistingImages] = useState([]);
+    const [previews, setPreviews] = useState([]);
 
     useEffect(() => {
         fetchProducts();
@@ -51,8 +54,10 @@ const AdminProducts = () => {
                 price: product.price,
                 category: product.category,
                 stock: product.stock,
-                imageUrl: product.images && product.images[0] ? product.images[0] : ""
+                discountPrice: product.discountPrice || ""
             });
+            setPreviews(product.images || []);
+            setExistingImages(product.images || []);
         } else {
             setEditingProduct(null);
             setFormData({
@@ -61,32 +66,80 @@ const AdminProducts = () => {
                 price: "",
                 category: "",
                 stock: "",
-                imageUrl: ""
+                discountPrice: ""
             });
+            setPreviews([]);
+            setExistingImages([]);
         }
+        setSelectedFiles([]);
         setShowModal(true);
+    };
+
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        if (previews.length + files.length > 5) {
+            alert("Maximum 5 images allowed per product.");
+            return;
+        }
+
+        setSelectedFiles(prev => [...prev, ...files]);
+
+        // Create previews
+        const newPreviews = files.map(file => URL.createObjectURL(file));
+        setPreviews(prev => [...prev, ...newPreviews]);
+    };
+
+    const removeImage = (index) => {
+        const previewToRemove = previews[index];
+
+        // Check if it's an existing image (URL) or a new preview (blob)
+        if (previewToRemove.startsWith('blob:')) {
+            // Find which file this belongs to
+            const previewIndexInNewFiles = previews.filter(p => p.startsWith('blob:')).indexOf(previewToRemove);
+            setSelectedFiles(prev => prev.filter((_, i) => i !== previewIndexInNewFiles));
+        } else {
+            setExistingImages(prev => prev.filter(img => img !== previewToRemove));
+        }
+
+        setPreviews(prev => prev.filter((_, i) => i !== index));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitting(true);
         try {
-            const productData = {
-                ...formData,
-                images: [formData.imageUrl]
+            const data = new FormData();
+            data.append("title", formData.title);
+            data.append("description", formData.description);
+            data.append("price", formData.price);
+            data.append("category", formData.category);
+            data.append("stock", formData.stock);
+            if (formData.discountPrice) data.append("discountPrice", formData.discountPrice);
+
+            existingImages.forEach(img => {
+                data.append("images", img);
+            });
+
+            selectedFiles.forEach(file => {
+                data.append("images", file);
+            });
+
+            const config = {
+                headers: { "Content-Type": "multipart/form-data" }
             };
 
             if (editingProduct) {
-                await API.put(`/products/${editingProduct._id}`, productData);
+                await API.put(`/products/${editingProduct._id}`, data, config);
             } else {
-                await API.post("/products", productData);
+                await API.post("/products", data, config);
             }
 
             fetchProducts();
             setShowModal(false);
+            alert(`Product ${editingProduct ? "updated" : "added"} successfully!`);
         } catch (error) {
             console.error("Submit error:", error);
-            alert(`Failed to ${editingProduct ? "update" : "add"} product`);
+            alert(`Failed to ${editingProduct ? "update" : "add"} product: ${error.response?.data?.message || error.message}`);
         } finally {
             setSubmitting(false);
         }
@@ -256,16 +309,36 @@ const AdminProducts = () => {
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Product Image URL</label>
-                                <input
-                                    type="text"
-                                    required
-                                    className="input-field"
-                                    placeholder="https://images.unsplash.com/..."
-                                    value={formData.imageUrl}
-                                    onChange={e => setFormData({ ...formData, imageUrl: e.target.value })}
-                                />
+                            <div className="space-y-4">
+                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Product Images</label>
+                                <div className="grid grid-cols-4 gap-4">
+                                    {previews.map((src, i) => (
+                                        <div key={i} className="aspect-square rounded-xl border border-slate-100 overflow-hidden bg-slate-50 relative group">
+                                            <img src={src} alt="" className="w-full h-full object-cover" />
+                                            <button
+                                                type="button"
+                                                onClick={() => removeImage(i)}
+                                                className="absolute top-1 right-1 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    ))}
+                                    {previews.length < 5 && (
+                                        <label className="aspect-square rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-slate-50 transition-all group">
+                                            <span className="text-2xl text-slate-400 group-hover:scale-110 transition-transform">+</span>
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase mt-1">Add</span>
+                                            <input
+                                                type="file"
+                                                multiple
+                                                className="hidden"
+                                                accept="image/*"
+                                                onChange={handleFileChange}
+                                            />
+                                        </label>
+                                    )}
+                                </div>
+                                <p className="text-[10px] text-slate-400 italic">Select up to 5 high-quality images of your product.</p>
                             </div>
 
                             <div className="pt-4">

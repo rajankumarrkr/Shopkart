@@ -255,6 +255,7 @@ exports.getAllOrders = async (req, res) => {
       .populate("items.product")
       .sort({ createdAt: -1 });
 
+    console.log("Admin Orders Fetch - Count:", orders.length);
     res.status(200).json(orders);
 
   } catch (error) {

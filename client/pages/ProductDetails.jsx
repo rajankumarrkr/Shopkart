@@ -9,6 +9,13 @@ const ProductDetails = () => {
     const [loading, setLoading] = useState(true);
     const { addToCart } = useCart();
     const navigate = useNavigate();
+    const [mainImage, setMainImage] = useState("");
+
+    useEffect(() => {
+        if (product && product.images && product.images.length > 0) {
+            setMainImage(product.images[0]);
+        }
+    }, [product]);
 
     const handleBuyNow = () => {
         const item = { ...product, qty: 1 };
@@ -44,12 +51,17 @@ const ProductDetails = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mt-8">
                 {/* Images */}
                 <div className="space-y-4">
-                    <div className="glass-card aspect-square overflow-hidden rounded-3xl">
-                        <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover" />
+                    <div className="glass-card aspect-square overflow-hidden rounded-3xl group relative">
+                        <img src={mainImage} alt={product.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
                     </div>
                     <div className="grid grid-cols-4 gap-4">
                         {product.images.map((img, idx) => (
-                            <div key={idx} className="glass-card aspect-square overflow-hidden rounded-xl cursor-not-allowed opacity-50">
+                            <div
+                                key={idx}
+                                onClick={() => setMainImage(img)}
+                                className={`glass-card aspect-square overflow-hidden rounded-xl cursor-pointer transition-all duration-300 ${mainImage === img ? 'ring-2 ring-primary border-transparent' : 'opacity-60 hover:opacity-100'}`}
+                            >
                                 <img src={img} alt={`${product.title} ${idx}`} className="w-full h-full object-cover" />
                             </div>
                         ))}

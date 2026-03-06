@@ -13,9 +13,10 @@ const AdminOrders = () => {
     const fetchOrders = async () => {
         try {
             const { data } = await API.get("/orders");
-            setOrders(data);
+            setOrders(Array.isArray(data) ? data : []);
         } catch (error) {
-            console.error(error);
+            console.error("Fetch Orders Error:", error);
+            setOrders([]);
         } finally {
             setLoading(false);
         }
@@ -55,11 +56,13 @@ const AdminOrders = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {orders.map((order) => (
-                                <tr key={order._id} className="hover:bg-slate-50/50 transition-colors">
+                            {Array.isArray(orders) && orders.map((order) => (
+                                <tr key={order?._id} className="hover:bg-slate-50/50 transition-colors">
                                     <td className="p-6">
-                                        <p className="font-bold text-sm">#{order._id.slice(-8).toUpperCase()}</p>
-                                        <p className="text-xs text-slate-500 mt-1">{order.user?.name} | {order.user?.email}</p>
+                                        <p className="font-bold text-sm">#{order?._id?.slice(-8).toUpperCase() || "UNKNOWN"}</p>
+                                        <p className="text-xs text-slate-500 mt-1">
+                                            {order.user?.name || "Unregistered User"} | {order.user?.email || "No Email"}
+                                        </p>
                                     </td>
                                     <td className="p-6">
                                         <p className="font-black text-primary">₹{order.totalAmount}</p>
@@ -70,7 +73,7 @@ const AdminOrders = () => {
                                                 order.paymentStatus === "Rejected" ? "bg-red-50 text-red-600 border-red-100" :
                                                     "bg-amber-50 text-amber-600 border-amber-100"
                                                 }`}>
-                                                Pay: {order.paymentStatus}
+                                                Pay: {order.paymentStatus || "Pending"}
                                             </span>
                                         </div>
                                     </td>
@@ -86,6 +89,13 @@ const AdminOrders = () => {
                             ))}
                         </tbody>
                     </table>
+                    {orders.length === 0 && (
+                        <div className="p-20 text-center">
+                            <p className="text-4xl mb-4">📭</p>
+                            <h3 className="text-xl font-bold text-slate-800">No orders found</h3>
+                            <p className="text-slate-400 mt-2">When users start shopping, their orders will appear here.</p>
+                        </div>
+                    )}
                 </div>
             )}
 

@@ -116,9 +116,9 @@ exports.updateProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // Handle file uploads if present
+    // Handle new file uploads
     if (req.files && req.files.length > 0) {
-      let imageUrls = [];
+      const imageUrls = [];
       for (let file of req.files) {
         const uploadResult = await new Promise((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
@@ -132,7 +132,11 @@ exports.updateProduct = async (req, res) => {
         });
         imageUrls.push(uploadResult.secure_url);
       }
+      // If we have files, these are the new images
       req.body.images = imageUrls;
+    } else if (req.body.images) {
+      // If no files, ensure images from body is an array if provided
+      req.body.images = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
     }
 
     Object.assign(product, req.body);
