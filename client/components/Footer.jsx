@@ -1,32 +1,122 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
+
 const Footer = () => {
+    const [email, setEmail] = useState("");
+    const [subscribed, setSubscribed] = useState(false);
+
+    const handleSubscribe = (e) => {
+        e.preventDefault();
+        if (email.trim()) { setSubscribed(true); setEmail(""); }
+    };
+
     return (
-        <footer className="bg-slate-50 border-t border-slate-200 py-12 mt-20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    <div className="col-span-1 md:col-span-2">
-                        <h2 className="text-2xl font-extrabold gradient-text mb-4">SHOPKART</h2>
-                        <p className="text-slate-600 max-w-sm mb-6">
-                            Experience the future of online shopping with our curated collection of premium products and seamless user experience.
+        <footer className="bg-slate-900 text-slate-300">
+            {/* Top section */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+                    {/* Brand */}
+                    <div className="sm:col-span-2 lg:col-span-1">
+                        <h2 className="text-2xl font-black text-white mb-3 gradient-text">SHOPKART</h2>
+                        <p className="text-slate-400 text-sm leading-relaxed mb-5">
+                            Your premium destination for curated products. Quality, style, and convenience in one place.
                         </p>
+                        {/* Social icons */}
+                        <div className="flex gap-3">
+                            {[
+                                { label: "Instagram", path: "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" },
+                                { label: "Twitter/X", path: "M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" },
+                                { label: "Facebook", path: "M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" },
+                                { label: "YouTube", path: "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" },
+                            ].map(({ label, path }) => (
+                                <a key={label} href="#" aria-label={label}
+                                    className="w-9 h-9 rounded-xl bg-slate-800 hover:bg-violet-600 flex items-center justify-center transition-all duration-200 hover:scale-110 group">
+                                    <svg className="w-4 h-4 fill-slate-400 group-hover:fill-white transition-colors" viewBox="0 0 24 24">
+                                        <path d={path} />
+                                    </svg>
+                                </a>
+                            ))}
+                        </div>
                     </div>
+
+                    {/* Quick Links */}
                     <div>
-                        <h3 className="font-bold mb-4">Quick Links</h3>
-                        <ul className="space-y-2 text-slate-600">
-                            <li><a href="#" className="hover:text-primary transition-colors">About Us</a></li>
-                            <li><a href="#" className="hover:text-primary transition-colors">Privacy Policy</a></li>
-                            <li><a href="#" className="hover:text-primary transition-colors">Terms of Service</a></li>
+                        <h3 className="text-white font-black text-sm mb-4">Quick Links</h3>
+                        <ul className="space-y-2.5">
+                            {[["Home", "/"], ["Shop", "/shop"], ["Cart", "/cart"], ["My Orders", "/profile"]].map(([label, href]) => (
+                                <li key={label}>
+                                    <Link to={href} className="text-slate-400 hover:text-white text-sm transition-colors hover:translate-x-1 inline-flex items-center gap-1.5 group">
+                                        <span className="w-1 h-1 rounded-full bg-violet-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        {label}
+                                    </Link>
+                                </li>
+                            ))}
                         </ul>
                     </div>
+
+                    {/* Support */}
                     <div>
-                        <h3 className="font-bold mb-4">Newsletter</h3>
-                        <div className="flex">
-                            <input type="email" placeholder="Email" className="input-field rounded-r-none py-2" />
-                            <button className="btn-primary rounded-l-none py-2 px-4 shadow-none">Go</button>
+                        <h3 className="text-white font-black text-sm mb-4">Support</h3>
+                        <ul className="space-y-2.5">
+                            {[["About Us", "#"], ["Privacy Policy", "#"], ["Terms of Service", "#"], ["Return Policy", "#"], ["Contact Us", "#"]].map(([label, href]) => (
+                                <li key={label}>
+                                    <a href={href} className="text-slate-400 hover:text-white text-sm transition-colors hover:translate-x-1 inline-flex items-center gap-1.5 group">
+                                        <span className="w-1 h-1 rounded-full bg-violet-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        {label}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Newsletter + Contact */}
+                    <div>
+                        <h3 className="text-white font-black text-sm mb-4">Stay Updated</h3>
+                        {subscribed ? (
+                            <p className="text-emerald-400 text-sm font-medium flex items-center gap-2">✅ Subscribed! Thank you.</p>
+                        ) : (
+                            <form onSubmit={handleSubscribe} className="space-y-2">
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    placeholder="Your email address"
+                                    required
+                                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                />
+                                <button type="submit" className="w-full btn-primary py-2.5 rounded-xl font-black text-sm">
+                                    Subscribe →
+                                </button>
+                            </form>
+                        )}
+
+                        {/* Contact */}
+                        <div className="mt-5 space-y-2">
+                            <a href="mailto:support@shopkart.in" className="flex items-center gap-2 text-slate-400 hover:text-white text-xs transition-colors">
+                                <span className="text-base">✉️</span> support@shopkart.in
+                            </a>
+                            <p className="flex items-center gap-2 text-slate-400 text-xs">
+                                <span className="text-base">📍</span> Mumbai, India
+                            </p>
+                            <p className="flex items-center gap-2 text-slate-400 text-xs">
+                                <span className="text-base">📞</span> +91 98765 43210
+                            </p>
                         </div>
                     </div>
                 </div>
-                <div className="mt-12 pt-8 border-t border-slate-200 text-center text-slate-400 text-sm">
-                    &copy; {new Date().getFullYear()} Shopkart. All rights reserved.
+            </div>
+
+            {/* Bottom bar */}
+            <div className="border-t border-slate-800">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+                    <p>© {new Date().getFullYear()} Shopkart. All rights reserved.</p>
+                    <div className="flex items-center gap-2 flex-wrap justify-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/200px-Mastercard-logo.svg.png" alt="Mastercard" className="h-5 opacity-50 hover:opacity-80 transition-opacity" />
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/200px-Visa_Inc._logo.svg.png" alt="Visa" className="h-4 opacity-50 hover:opacity-80 transition-opacity" />
+                        <span className="text-slate-600 bg-slate-800 px-2 py-0.5 rounded text-[10px] font-bold">UPI</span>
+                        <span className="text-slate-600 bg-slate-800 px-2 py-0.5 rounded text-[10px] font-bold">COD</span>
+                    </div>
                 </div>
             </div>
         </footer>

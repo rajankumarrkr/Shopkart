@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="flex-grow pt-24">
+      <main className="flex-grow pt-28 md:pt-20">
         <AppRoutes />
       </main>
       <Footer />
