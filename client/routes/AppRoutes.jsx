@@ -7,6 +7,9 @@ import Cart from "../pages/Cart";
 import Checkout from "../pages/Checkout";
 import ProductDetails from "../pages/ProductDetails";
 import Profile from "../pages/Profile";
+import MyOrders from "../pages/MyOrders";
+import HelpCenter from "../pages/HelpCenter";
+import SavedAddress from "../pages/SavedAddress";
 import AdminDashboard from "../pages/AdminDashboard";
 import AdminSettings from "../pages/AdminSettings";
 import AdminProducts from "../pages/AdminProducts";
@@ -45,6 +48,9 @@ const AppRoutes = () => {
       <Route path="/cart" element={<Cart />} />
       <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      <Route path="/account/orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+      <Route path="/account/help" element={<ProtectedRoute><HelpCenter /></ProtectedRoute>} />
+      <Route path="/account/address" element={<ProtectedRoute><SavedAddress /></ProtectedRoute>} />
       <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
       <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
       <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
