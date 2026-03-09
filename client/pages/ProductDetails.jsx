@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import API from "../api/api";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import ShareModal from "../components/ShareModal";
 
 /* ─── Star Rating ─────────────────────────────────────── */
 const StarRating = ({ value, onChange, size = "md" }) => {
@@ -333,9 +334,28 @@ const ProductDetails = () => {
     const [loading, setLoading] = useState(true);
     const [reviews, setReviews] = useState([]);
     const [reviewsLoading, setReviewsLoading] = useState(true);
+    const [isShareOpen, setIsShareOpen] = useState(false);
     const { addToCart } = useCart();
     const { user } = useAuth();
     const navigate = useNavigate();
+
+    const shareUrl = window.location.href;
+
+    const handleShare = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: product.title,
+                    text: `Check out this ${product.title} on ShopKart!`,
+                    url: shareUrl,
+                });
+            } catch (err) {
+                console.log("Share failed:", err);
+            }
+        } else {
+            setIsShareOpen(true);
+        }
+    };
 
     useEffect(() => {
         API.get(`/products/${id}`)
@@ -472,6 +492,17 @@ const ProductDetails = () => {
                         </button>
                     </div>
 
+                    {/* Share Button Block */}
+                    <button
+                        onClick={handleShare}
+                        className="w-full mt-3 py-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 text-slate-600 font-bold text-sm"
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                        </svg>
+                        <span>Share this Product</span>
+                    </button>
+
                     <p className="text-center text-slate-300 text-xs">🚚 Free shipping on all premium items</p>
                 </div>
             </div>
@@ -541,6 +572,15 @@ const ProductDetails = () => {
 
                 </div>
             </div>
+
+            {product && (
+                <ShareModal
+                    isOpen={isShareOpen}
+                    onClose={() => setIsShareOpen(false)}
+                    product={product}
+                    shareUrl={shareUrl}
+                />
+            )}
         </div>
     );
 };
