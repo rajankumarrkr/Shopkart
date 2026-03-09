@@ -36,7 +36,27 @@ const Home = () => {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(86400 - (Math.floor(Date.now() / 1000) % 86400));
   const timerRef = useRef(null);
+
+  /* Countdown timer logic - synced with clock so it doesn't reset on refresh */
+  useEffect(() => {
+    const countdown = setInterval(() => {
+      setTimeLeft(86400 - (Math.floor(Date.now() / 1000) % 86400));
+    }, 1000);
+    return () => clearInterval(countdown);
+  }, []);
+
+  const formatTime = (seconds) => {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return [
+      { n: h.toString().padStart(2, '0'), l: "HRS" },
+      { n: m.toString().padStart(2, '0'), l: "MIN" },
+      { n: s.toString().padStart(2, '0'), l: "SEC" }
+    ];
+  };
 
   useEffect(() => {
     API.get("/products")
@@ -250,9 +270,8 @@ const Home = () => {
               </p>
             </div>
             <div className="flex flex-col items-center gap-4 shrink-0">
-              {/* Countdown-style badges */}
               <div className="flex gap-3">
-                {[["12", "HRS"], ["34", "MIN"], ["56", "SEC"]].map(([n, l]) => (
+                {formatTime(timeLeft).map(({ n, l }) => (
                   <div key={l} className="bg-white/15 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 text-center min-w-[56px]">
                     <p className="text-2xl font-black leading-none">{n}</p>
                     <p className="text-[10px] text-white/60 font-bold mt-0.5">{l}</p>
