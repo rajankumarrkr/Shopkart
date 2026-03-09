@@ -71,39 +71,22 @@ const Footer = () => {
                     </div>
 
                     {/* Newsletter + Contact */}
-                    <div>
-                        <h3 className="text-white font-black text-sm mb-4">Stay Updated</h3>
-                        {subscribed ? (
-                            <p className="text-emerald-400 text-sm font-medium flex items-center gap-2">✅ Subscribed! Thank you.</p>
-                        ) : (
-                            <form onSubmit={handleSubscribe} className="space-y-2">
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={e => setEmail(e.target.value)}
-                                    placeholder="Your email address"
-                                    required
-                                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                                />
-                                <button type="submit" className="w-full btn-primary py-2.5 rounded-xl font-black text-sm">
-                                    Subscribe →
-                                </button>
-                            </form>
-                        )}
 
-                        {/* Contact */}
-                        <div className="mt-5 space-y-2">
-                            <a href="mailto:support@shopkart.in" className="flex items-center gap-2 text-slate-400 hover:text-white text-xs transition-colors">
-                                <span className="text-base">✉️</span> support@shopkart.in
-                            </a>
-                            <p className="flex items-center gap-2 text-slate-400 text-xs">
-                                <span className="text-base">📍</span> Mumbai, India
-                            </p>
-                            <p className="flex items-center gap-2 text-slate-400 text-xs">
-                                <span className="text-base">📞</span> +91 98765 43210
-                            </p>
-                        </div>
+
+
+                    {/* Contact */}
+                    <div className="mt-5 space-y-2">
+                        <a href="mailto:support@shopkart.in" className="flex items-center gap-2 text-slate-400 hover:text-white text-xs transition-colors">
+                            <span className="text-base">✉️</span> support@shopkart.in
+                        </a>
+                        <p className="flex items-center gap-2 text-slate-400 text-xs">
+                            <span className="text-base">📍</span> Mumbai, India
+                        </p>
+                        <p className="flex items-center gap-2 text-slate-400 text-xs">
+                            <span className="text-base">📞</span> +91 98765 43210
+                        </p>
                     </div>
+
                 </div>
             </div>
 
