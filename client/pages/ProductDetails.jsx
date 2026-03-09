@@ -4,6 +4,7 @@ import API from "../api/api";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import ShareModal from "../components/ShareModal";
+import ProductCard from "../components/ProductCard";
 
 /* ─── Star Rating ─────────────────────────────────────── */
 const StarRating = ({ value, onChange, size = "md" }) => {
@@ -335,6 +336,8 @@ const ProductDetails = () => {
     const [reviews, setReviews] = useState([]);
     const [reviewsLoading, setReviewsLoading] = useState(true);
     const [isShareOpen, setIsShareOpen] = useState(false);
+    const [relatedProducts, setRelatedProducts] = useState([]);
+    const [relatedLoading, setRelatedLoading] = useState(true);
     const { addToCart } = useCart();
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -370,6 +373,19 @@ const ProductDetails = () => {
             .catch(console.error)
             .finally(() => setReviewsLoading(false));
     }, [id]);
+
+    useEffect(() => {
+        if (product?.category) {
+            setRelatedLoading(true);
+            API.get(`/products?category=${product.category}&limit=5`)
+                .then(({ data }) => {
+                    const filtered = data.filter(p => p._id !== id);
+                    setRelatedProducts(filtered.slice(0, 4));
+                })
+                .catch(console.error)
+                .finally(() => setRelatedLoading(false));
+        }
+    }, [product, id]);
 
     const avgRating = reviews.length
         ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
@@ -571,6 +587,40 @@ const ProductDetails = () => {
                     </div>
 
                 </div>
+            </div>
+
+            {/* ── Related Products ─────────────────────────── */}
+            <div className="mt-20 sm:mt-24 space-y-8 animate-fade-up">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-100 pb-4">
+                    <div>
+                        <p className="text-violet-600 font-bold text-xs uppercase tracking-widest mb-1.5">You May Also Like</p>
+                        <h2 className="text-2xl sm:text-3xl font-black text-slate-900">Related Products</h2>
+                    </div>
+                    <Link to="/shop" className="text-violet-600 font-black text-sm flex items-center gap-1.5 hover:gap-3 transition-all group">
+                        See More
+                        <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </Link>
+                </div>
+
+                {relatedLoading ? (
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                        {[1, 2, 3, 4].map(i => (
+                            <div key={i} className="rounded-2xl h-64 bg-slate-100 animate-pulse" />
+                        ))}
+                    </div>
+                ) : relatedProducts.length > 0 ? (
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                        {relatedProducts.map(p => (
+                            <ProductCard key={p._id} product={p} />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center py-10 bg-slate-50 rounded-3xl border border-slate-100">
+                        <p className="text-slate-400 font-medium">No related products found in this category.</p>
+                    </div>
+                )}
             </div>
 
             {product && (
