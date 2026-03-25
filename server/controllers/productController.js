@@ -106,6 +106,59 @@ exports.getProductById = async (req, res) => {
 };
 
 /**
+ * Share Product (Dynamic Meta Tags)
+ */
+exports.shareProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).send("Product not found");
+    }
+
+    const redirectUrl = req.query.redirect || "/";
+    const imageUrl = product.images && product.images.length > 0 ? product.images[0] : "";
+    
+    // Create an HTML string with Open Graph tags to be read by scrapers
+    const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${product.title} - ShopKart</title>
+    <meta name="description" content="${product.description}">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:type" content="product">
+    <meta property="og:site_name" content="ShopKart">
+    <meta property="og:title" content="${product.title} - ShopKart">
+    <meta property="og:description" content="${product.description}">
+    <meta property="og:image" content="${imageUrl}">
+    <meta property="og:url" content="${redirectUrl}">
+    
+    <!-- Twitter Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="${product.title} - ShopKart">
+    <meta name="twitter:description" content="${product.description}">
+    <meta name="twitter:image" content="${imageUrl}">
+    
+    <!-- Redirect for actual users clicking the link -->
+    <meta http-equiv="refresh" content="0;url=${redirectUrl}">
+    <script>window.location.href = "${redirectUrl}";</script>
+</head>
+<body>
+    <p>Redirecting to <a href="${redirectUrl}">${product.title}</a>...</p>
+</body>
+</html>`;
+
+    res.send(html);
+  } catch (error) {
+    res.status(500).send("Server Error");
+  }
+};
+
+/**
  * Update Product (Admin Only)
  */
 exports.updateProduct = async (req, res) => {

@@ -8,6 +8,7 @@ const {
   getProductById,
   updateProduct,
   deleteProduct,
+  shareProduct,
 } = require("../controllers/productController");
 
 const { protect, adminOnly } = require("../middleware/authMiddleware");
@@ -15,6 +16,7 @@ const { protect, adminOnly } = require("../middleware/authMiddleware");
 // Public Routes
 router.get("/", getProducts);
 router.get("/:id", getProductById);
+router.get("/share/:id", shareProduct);
 
 // Admin Routes
 router.post(

@@ -5,6 +5,7 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import ShareModal from "../components/ShareModal";
 import ProductCard from "../components/ProductCard";
+import { Helmet } from "react-helmet-async";
 
 /* ─── Star Rating ─────────────────────────────────────── */
 const StarRating = ({ value, onChange, size = "md" }) => {
@@ -342,7 +343,11 @@ const ProductDetails = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
 
-    const shareUrl = window.location.href;
+    const frontendUrl = window.location.href;
+    const backendUrl = API.defaults.baseURL.replace(/\/api\/?$/, "");
+    const shareUrl = product 
+        ? `${backendUrl}/api/products/share/${product._id}?redirect=${encodeURIComponent(frontendUrl)}`
+        : frontendUrl;
 
     const handleShare = async () => {
         if (navigator.share) {
@@ -418,6 +423,22 @@ const ProductDetails = () => {
 
     return (
         <div className="container mx-auto px-4 py-6 sm:py-10 md:py-16 animate-fade-up">
+
+            <Helmet>
+                <title>{product.title} - ShopKart</title>
+                <meta name="description" content={product.description} />
+                <meta property="og:title" content={`${product.title} - ShopKart`} />
+                <meta property="og:description" content={product.description} />
+                {product.images && product.images[0] && (
+                    <meta property="og:image" content={product.images[0]} />
+                )}
+                <meta property="og:url" content={frontendUrl} />
+                <meta property="og:type" content="product" />
+                <meta name="twitter:card" content="summary_large_image" />
+                {product.images && product.images[0] && (
+                    <meta name="twitter:image" content={product.images[0]} />
+                )}
+            </Helmet>
 
             {/* Back */}
             <Link to="/shop" className="inline-flex items-center gap-1.5 text-slate-400 hover:text-violet-600 text-sm font-medium mb-6 transition-colors">
