@@ -344,7 +344,10 @@ const ProductDetails = () => {
     const navigate = useNavigate();
 
     const frontendUrl = window.location.href;
-    const backendUrl = API.defaults.baseURL.replace(/\/api\/?$/, "");
+    let backendUrl = API.defaults.baseURL.replace(/\/api\/?$/, "");
+    if (!backendUrl.startsWith("http")) {
+        backendUrl = window.location.origin + backendUrl;
+    }
     const shareUrl = product 
         ? `${backendUrl}/api/products/share/${product._id}?redirect=${encodeURIComponent(frontendUrl)}`
         : frontendUrl;
