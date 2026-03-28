@@ -67,8 +67,50 @@ const Cart = () => {
             const response = await API.post("/orders", orderPayload);
 
             if (response.data && response.data.order) {
-                setOrderId(response.data.order._id);
-                setStep(2);
+                const orderId = response.data.order._id;
+                setOrderId(orderId);
+                
+                // Step 2: Initialize Razorpay
+                const { data: rzpData } = await API.post(`/orders/${orderId}/razorpay`);
+                
+                const options = {
+                    key: rzpData.key,
+                    amount: rzpData.rzpOrder.amount,
+                    currency: rzpData.rzpOrder.currency,
+                    name: "ShopKart",
+                    description: "Order Payment",
+                    order_id: rzpData.rzpOrder.id,
+                    handler: async (response) => {
+                        try {
+                            setLoading(true);
+                            await API.post(`/orders/${orderId}/verify`, {
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
+                            });
+                            setIsSuccess(true);
+                            setTimeout(() => {
+                                clearCart();
+                                setShowPayment(false);
+                            }, 3000);
+                        } catch (err) {
+                            alert("Payment verification failed. Please contact support.");
+                        } finally {
+                            setLoading(false);
+                        }
+                    },
+                    prefill: {
+                        name: shippingData.fullName,
+                        contact: shippingData.phone,
+                    },
+                    theme: {
+                        color: "#6366f1",
+                    },
+                };
+
+                const rzp = new window.Razorpay(options);
+                rzp.open();
+                setStep(2); // Just to indicate progress
             } else {
                 throw new Error("Invalid response from server");
             }
@@ -78,37 +120,6 @@ const Cart = () => {
         } finally {
             setLoading(false);
         }
-    };
-
-    const handlePaymentSubmit = async (e) => {
-        e.preventDefault();
-        if (!paymentData.utrNumber.trim()) return alert("Please enter your UTR / Transaction ID");
-
-        setLoading(true);
-        const formData = new FormData();
-        if (paymentData.screenshot) {
-            formData.append("paymentScreenshot", paymentData.screenshot);
-        }
-        formData.append("transactionId", paymentData.utrNumber);
-
-        try {
-            await API.post(`/orders/${orderId}/payment`, formData);
-            setIsSuccess(true);
-            setTimeout(() => {
-                clearCart();
-                setShowPayment(false);
-            }, 3000);
-        } catch (error) {
-            alert(error.response?.data?.message || "Failed to submit payment. Please try again.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const copyUPI = () => {
-        navigator.clipboard.writeText(adminSettings?.upiId || "");
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
     };
 
     return (
@@ -138,7 +149,7 @@ const Cart = () => {
                                     onClick={() => removeFromCart(item._id)}
                                     className="p-2 text-slate-300 hover:text-red-500 transition-colors"
                                 >
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
                                 </button>
@@ -168,7 +179,7 @@ const Cart = () => {
                                 onClick={handleProceed}
                                 className="btn-primary w-full block text-center py-4"
                             >
-                                Proceed to Payment
+                                Proceed to Checkout
                             </button>
                         </div>
                     </div>
@@ -188,15 +199,15 @@ const Cart = () => {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
-                                <h2 className="text-2xl font-black text-slate-800 mb-3">Payment Submitted!</h2>
-                                <p className="text-slate-500 text-sm">Your order is under verification. Thank you! 🎉</p>
+                                <h2 className="text-2xl font-black text-slate-800 mb-3">Order Placed!</h2>
+                                <p className="text-slate-500 text-sm">Your payment was successful and your order is confirmed. 🎉</p>
                             </div>
                         ) : (
                             <>
                                 {/* Header */}
                                 <div className="flex items-center justify-between p-6 border-b border-slate-100">
                                     <h2 className="text-xl font-black text-slate-800">
-                                        {step === 1 ? "📦 Shipping Details" : "💳 Pay via UPI"}
+                                        {step === 1 ? "📦 Shipping Details" : "💳 Completing Payment"}
                                     </h2>
                                     <button
                                         onClick={() => setShowPayment(false)}
@@ -208,152 +219,46 @@ const Cart = () => {
                                     </button>
                                 </div>
 
-                                {/* Step 1 — Shipping */}
-                                {step === 1 && (
-                                    <form onSubmit={handleShippingSubmit} className="p-6 space-y-4">
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Full Name</label>
-                                                <input type="text" required className="input-field" value={shippingData.fullName} onChange={e => setShippingData({ ...shippingData, fullName: e.target.value })} />
-                                            </div>
-                                            <div>
-                                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Phone</label>
-                                                <input type="text" required className="input-field" value={shippingData.phone} onChange={e => setShippingData({ ...shippingData, phone: e.target.value })} />
-                                            </div>
+                                {/* Step 1 — Shipping (Always visible until payment starts) */}
+                                <form onSubmit={handleShippingSubmit} className="p-6 space-y-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Full Name</label>
+                                            <input type="text" required className="input-field" value={shippingData.fullName} onChange={e => setShippingData({ ...shippingData, fullName: e.target.value })} />
                                         </div>
                                         <div>
-                                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Address</label>
-                                            <input type="text" required className="input-field" value={shippingData.address} onChange={e => setShippingData({ ...shippingData, address: e.target.value })} />
+                                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Phone</label>
+                                            <input type="text" required className="input-field" value={shippingData.phone} onChange={e => setShippingData({ ...shippingData, phone: e.target.value })} />
                                         </div>
-                                        <div className="grid grid-cols-3 gap-4">
-                                            <div>
-                                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">City</label>
-                                                <input type="text" required className="input-field" value={shippingData.city} onChange={e => setShippingData({ ...shippingData, city: e.target.value })} />
-                                            </div>
-                                            <div>
-                                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">State</label>
-                                                <input type="text" required className="input-field" value={shippingData.state} onChange={e => setShippingData({ ...shippingData, state: e.target.value })} />
-                                            </div>
-                                            <div>
-                                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Pincode</label>
-                                                <input type="text" required className="input-field" value={shippingData.pincode} onChange={e => setShippingData({ ...shippingData, pincode: e.target.value })} />
-                                            </div>
-                                        </div>
-                                        <div className="pt-2">
-                                            <div className="flex items-center justify-between mb-3 p-3 bg-blue-50 rounded-xl border border-blue-100">
-                                                <span className="text-sm font-bold text-slate-600">Total Payable</span>
-                                                <span className="text-xl font-black text-primary">₹{cartTotal}</span>
-                                            </div>
-                                            <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-base">
-                                                {loading ? "Creating Order..." : "Next: Proceed to Payment →"}
-                                            </button>
-                                        </div>
-                                    </form>
-                                )}
-
-                                {/* Step 2 — UPI Payment */}
-                                {step === 2 && (
-                                    <form onSubmit={handlePaymentSubmit} className="p-6 space-y-6">
-                                        {/* Amount */}
-                                        <div className="text-center p-4 bg-primary/5 rounded-2xl border border-primary/10">
-                                            <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">Amount to Pay</p>
-                                            <p className="text-3xl font-black text-primary">₹{cartTotal}</p>
-                                        </div>
-
-                                        {/* QR Code */}
-                                        <div className="flex flex-col items-center gap-4">
-                                            <div className="w-48 h-48 bg-white p-3 rounded-2xl shadow-xl border-2 border-slate-100 flex items-center justify-center">
-                                                {adminSettings?.qrCodeUrl ? (
-                                                    <img src={adminSettings.qrCodeUrl} alt="UPI QR Code" className="w-full h-full object-contain" />
-                                                ) : (
-                                                    <div className="text-center">
-                                                        <div className="w-24 h-24 mx-auto bg-slate-100 rounded-xl flex items-center justify-center mb-2">
-                                                            <svg className="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                                                            </svg>
-                                                        </div>
-                                                        <p className="text-xs text-slate-400">QR Code Loading...</p>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <p className="text-xs text-slate-400 font-medium">📱 Scan with any UPI app</p>
-                                        </div>
-
-                                        {/* UPI ID */}
-                                        <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4">
-                                            <div>
-                                                <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-0.5">UPI ID</p>
-                                                <p className="text-lg font-black text-primary">{adminSettings?.upiId || "Loading..."}</p>
-                                            </div>
-                                            <button
-                                                type="button"
-                                                onClick={copyUPI}
-                                                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 ${copied ? "bg-emerald-500 text-white" : "bg-primary/10 text-primary hover:bg-primary/20"}`}
-                                            >
-                                                {copied ? "✓ Copied!" : "Copy"}
-                                            </button>
-                                        </div>
-
-                                        {/* Instructions */}
-                                        {adminSettings?.paymentInstructions && (
-                                            <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 text-sm text-amber-700 italic">
-                                                {adminSettings.paymentInstructions}
-                                            </div>
-                                        )}
-
-                                        {/* UTR Number */}
+                                    </div>
+                                    <div>
+                                        <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Address</label>
+                                        <input type="text" required className="input-field" value={shippingData.address} onChange={e => setShippingData({ ...shippingData, address: e.target.value })} />
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-4">
                                         <div>
-                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">
-                                                UTR / Transaction Number *
-                                            </label>
-                                            <input
-                                                type="text"
-                                                required
-                                                className="input-field"
-                                                placeholder="Enter 12-digit UTR or TXN ID"
-                                                value={paymentData.utrNumber}
-                                                onChange={e => setPaymentData({ ...paymentData, utrNumber: e.target.value })}
-                                            />
-                                            <p className="text-xs text-slate-400 mt-1">Find this in your payment app's transaction history</p>
+                                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">City</label>
+                                            <input type="text" required className="input-field" value={shippingData.city} onChange={e => setShippingData({ ...shippingData, city: e.target.value })} />
                                         </div>
-
-                                        {/* Screenshot (optional) */}
                                         <div>
-                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">
-                                                Payment Screenshot (Optional)
-                                            </label>
-                                            <div className="relative h-28 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center bg-slate-50 hover:bg-slate-100/50 transition-colors cursor-pointer overflow-hidden">
-                                                <input
-                                                    type="file"
-                                                    className="absolute inset-0 opacity-0 cursor-pointer z-10"
-                                                    onChange={e => setPaymentData({ ...paymentData, screenshot: e.target.files[0] })}
-                                                    accept="image/*"
-                                                />
-                                                {paymentData.screenshot ? (
-                                                    <span className="text-emerald-600 font-bold text-sm">✓ {paymentData.screenshot.name}</span>
-                                                ) : (
-                                                    <>
-                                                        <span className="text-2xl mb-1">📸</span>
-                                                        <span className="text-xs text-slate-400 font-semibold">Click to upload screenshot</span>
-                                                    </>
-                                                )}
-                                            </div>
+                                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">State</label>
+                                            <input type="text" required className="input-field" value={shippingData.state} onChange={e => setShippingData({ ...shippingData, state: e.target.value })} />
                                         </div>
-
-                                        <div className="space-y-3 pt-2">
-                                            <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-base">
-                                                {loading ? "Submitting..." : "✅ Confirm Payment"}
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => setStep(1)}
-                                                className="w-full text-slate-400 text-sm font-bold hover:text-slate-600 transition-colors py-2"
-                                            >
-                                                ← Back to Shipping
-                                            </button>
+                                        <div>
+                                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Pincode</label>
+                                            <input type="text" required className="input-field" value={shippingData.pincode} onChange={e => setShippingData({ ...shippingData, pincode: e.target.value })} />
                                         </div>
-                                    </form>
-                                )}
+                                    </div>
+                                    <div className="pt-2">
+                                        <div className="flex items-center justify-between mb-3 p-3 bg-blue-50 rounded-xl border border-blue-100">
+                                            <span className="text-sm font-bold text-slate-600">Total Payable</span>
+                                            <span className="text-xl font-black text-primary">₹{cartTotal}</span>
+                                        </div>
+                                        <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-base">
+                                            {loading ? "Processing..." : "Pay with Razorpay →"}
+                                        </button>
+                                    </div>
+                                </form>
                             </>
                         )}
                     </div>

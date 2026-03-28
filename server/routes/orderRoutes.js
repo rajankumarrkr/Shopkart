@@ -3,7 +3,8 @@ const router = express.Router();
 
 const {
   createOrder,
-  uploadPaymentProof,
+  createRazorpayOrder,
+  verifyRazorpayPayment,
   approvePayment,
   rejectPayment,
   getUserOrders,
@@ -18,13 +19,11 @@ const upload = require("../middleware/uploadMiddleware");
 // Create order
 router.post("/", protect, createOrder);
 
-// Upload payment screenshot
-router.post(
-  "/:orderId/payment",
-  protect,
-  upload.single("paymentScreenshot"),
-  uploadPaymentProof
-);
+// Create Razorpay Order
+router.post("/:orderId/razorpay", protect, createRazorpayOrder);
+
+// Verify Razorpay Payment
+router.post("/:orderId/verify", protect, verifyRazorpayPayment);
 
 // Get logged-in user orders
 router.get("/my-orders", protect, getUserOrders);

@@ -21,49 +21,16 @@ router.get("/settings", protect, async (req, res) => {
 // Update settings (Admin Only)
 router.put("/settings", protect, adminOnly, async (req, res) => {
     try {
-        const { upiId, paymentInstructions } = req.body;
+        const { paymentInstructions } = req.body;
         let settings = await AdminSettings.findOne();
 
         if (!settings) {
             settings = new AdminSettings({});
         }
 
-        settings.upiId = upiId || settings.upiId;
         settings.paymentInstructions = paymentInstructions || settings.paymentInstructions;
 
         await settings.save();
-        res.json(settings);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
-
-// Upload QR (Admin Only)
-router.post("/settings/qr", protect, adminOnly, upload.single("qrCode"), async (req, res) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ message: "No file uploaded" });
-        }
-
-        const uploadResult = await new Promise((resolve, reject) => {
-            const stream = cloudinary.uploader.upload_stream(
-                { folder: "shopkart_admin" },
-                (error, result) => {
-                    if (error) reject(error);
-                    else resolve(result);
-                }
-            );
-            stream.end(req.file.buffer);
-        });
-
-        let settings = await AdminSettings.findOne();
-        if (!settings) {
-            settings = new AdminSettings({});
-        }
-
-        settings.qrCodeUrl = uploadResult.secure_url;
-        await settings.save();
-
         res.json(settings);
     } catch (error) {
         res.status(500).json({ message: error.message });

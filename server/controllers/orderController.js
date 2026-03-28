@@ -2,6 +2,13 @@ const Order = require("../models/Order");
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
 const cloudinary = require("../config/cloudinary");
+const Razorpay = require("razorpay");
+const crypto = require("crypto");
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 
 /**
  * Create Order From Cart
@@ -102,52 +109,77 @@ exports.createOrder = async (req, res) => {
 };
 
 /**
- * Upload Payment Screenshot + Transaction ID
+ * Create Razorpay Order
  */
-exports.uploadPaymentProof = async (req, res) => {
+exports.createRazorpayOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const { transactionId } = req.body;
-
-    if (!transactionId) {
-      return res.status(400).json({ message: "Transaction ID / UTR Number required" });
-    }
-
     const order = await Order.findById(orderId);
 
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    if (order.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: "Unauthorized access" });
-    }
+    const options = {
+      amount: order.totalAmount * 100, // amount in paise
+      currency: "INR",
+      receipt: order._id.toString(),
+    };
 
-    // Upload screenshot if provided (optional)
-    if (req.file) {
-      const uploadResult = await new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: "shopkart_payments" },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        );
-        stream.end(req.file.buffer);
-      });
-      order.paymentScreenshot = uploadResult.secure_url;
-    }
-
-    order.transactionId = transactionId;
-    order.paymentStatus = "Verification Pending";
-
-    await order.save();
+    const rzpOrder = await razorpay.orders.create(options);
 
     res.status(200).json({
-      message: "Payment proof uploaded successfully",
-      order
+      rzpOrder,
+      key: process.env.RAZORPAY_KEY_ID
     });
 
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
+ * Verify Razorpay Payment
+ */
+exports.verifyRazorpayPayment = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+    const sign = razorpay_order_id + "|" + razorpay_payment_id;
+    const expectedSign = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(sign.toString())
+      .digest("hex");
+
+    if (razorpay_signature === expectedSign) {
+      const order = await Order.findById(orderId).populate("items.product");
+      
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      // Reduce stock
+      for (let item of order.items) {
+        if (item.product) {
+          const product = await Product.findById(item.product._id);
+          if (product) {
+            product.stock -= item.quantity;
+            await product.save();
+          }
+        }
+      }
+
+      order.paymentStatus = "Approved";
+      order.orderStatus = "Confirmed";
+      order.transactionId = razorpay_payment_id;
+      
+      await order.save();
+      
+      return res.status(200).json({ message: "Payment verified successfully", order });
+    } else {
+      return res.status(400).json({ message: "Invalid payment signature" });
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

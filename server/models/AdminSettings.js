@@ -2,18 +2,9 @@ const mongoose = require("mongoose");
 
 const adminSettingsSchema = new mongoose.Schema(
     {
-        upiId: {
-            type: String,
-            required: true,
-            default: "example@upi"
-        },
-        qrCodeUrl: {
-            type: String,
-            default: ""
-        },
         paymentInstructions: {
             type: String,
-            default: "Please pay the exact amount using the QR code or UPI ID above and upload the screenshot with Transaction ID."
+            default: "Please complete the secure payment via Razorpay to confirm your order."
         }
     },
     { timestamps: true }

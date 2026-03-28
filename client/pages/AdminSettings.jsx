@@ -28,7 +28,6 @@ const AdminSettings = () => {
         setLoading(true);
         try {
             const { data } = await API.put("/admin/settings", {
-                upiId: upiInput,
                 paymentInstructions: instructionsInput
             });
             setSettings(data);
@@ -40,30 +39,11 @@ const AdminSettings = () => {
         }
     };
 
-    const handleQrUpload = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        setLoading(true);
-        const formData = new FormData();
-        formData.append("qrCode", file);
-
-        try {
-            const { data } = await API.post("/admin/settings/qr", formData);
-            setSettings(data);
-            setMessage("QR Code updated successfully!");
-        } catch (error) {
-            setMessage("Failed to upload QR code.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
     return (
         <div className="container mx-auto px-4 py-12 max-w-4xl">
             <h1 className="text-3xl font-black mb-12 flex items-center gap-3">
                 <span className="p-2 bg-primary/10 rounded-xl">⚙️</span>
-                Payment Settings
+                System Settings
             </h1>
 
             {message && (
@@ -72,24 +52,15 @@ const AdminSettings = () => {
                 </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div className="max-w-2xl mx-auto">
                 <div className="glass-card p-10 space-y-8">
-                    <h2 className="text-xl font-bold">General Settings</h2>
+                    <h2 className="text-xl font-bold">Checkout Settings</h2>
                     <form onSubmit={handleUpdateSettings} className="space-y-6">
                         <div>
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2">Admin UPI ID</label>
-                            <input
-                                type="text"
-                                className="input-field"
-                                value={upiInput}
-                                onChange={(e) => setUpiInput(e.target.value)}
-                                placeholder="example@upi"
-                            />
-                        </div>
-                        <div>
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2">Payment Instructions</label>
+                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2">Checkout Instructions</label>
                             <textarea
                                 className="input-field min-h-[100px]"
+                                placeholder="Instructions for users during payment..."
                                 value={instructionsInput}
                                 onChange={(e) => setInstructionsInput(e.target.value)}
                             />
@@ -99,30 +70,11 @@ const AdminSettings = () => {
                         </button>
                     </form>
                 </div>
-
-                <div className="glass-card p-10 flex flex-col items-center text-center space-y-8">
-                    <h2 className="text-xl font-bold w-full text-left">QR Code Management</h2>
-                    <div className="w-48 h-48 bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl flex items-center justify-center overflow-hidden">
-                        {settings.qrCodeUrl ? (
-                            <img src={settings.qrCodeUrl} alt="QR Code" className="w-full h-full object-contain p-4" />
-                        ) : (
-                            <span className="text-slate-300 text-sm">No QR Uploaded</span>
-                        )}
-                    </div>
-                    <div>
-                        <input
-                            type="file"
-                            id="qr-upload"
-                            className="hidden"
-                            accept="image/*"
-                            onChange={handleQrUpload}
-                        />
-                        <label htmlFor="qr-upload" className="btn-secondary py-3 px-8 cursor-pointer inline-block">
-                            {loading ? "Uploading..." : "Upload New QR"}
-                        </label>
-                    </div>
-                    <p className="text-xs text-slate-400">
-                        This QR code will be displayed to users during checkout for instant scanning.
+                
+                <div className="mt-8 p-6 bg-blue-50 border border-blue-100 rounded-2xl flex items-center gap-4 text-blue-700">
+                    <span className="text-2xl">⚡</span>
+                    <p className="text-sm font-medium">
+                        Razorpay Payment Gateway is active. Users will be automatically redirected to secure payment during checkout.
                     </p>
                 </div>
             </div>
