@@ -14,6 +14,7 @@ import AdminDashboard from "../pages/AdminDashboard";
 import AdminSettings from "../pages/AdminSettings";
 import AdminProducts from "../pages/AdminProducts";
 import AdminOrders from "../pages/AdminOrders";
+import AdminLogin from "../pages/AdminLogin";
 import { useAuth } from "../context/AuthContext";
 
 const ProtectedRoute = ({ children }) => {
@@ -33,8 +34,8 @@ const AdminRoute = ({ children }) => {
     return children;
   }
 
-  console.warn("Access denied. Redirecting to home.");
-  return <Navigate to="/" />;
+  console.warn("Access denied. Redirecting to admin login.");
+  return <Navigate to="/admin/login" />;
 };
 
 const AppRoutes = () => {
@@ -55,6 +56,7 @@ const AppRoutes = () => {
       <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
       <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
       <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
+      <Route path="/admin/login" element={<AdminLogin />} />
     </Routes>
   );
 };
