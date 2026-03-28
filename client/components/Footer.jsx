@@ -83,7 +83,7 @@ const Footer = () => {
                             <span className="text-base">📍</span> Mumbai, India
                         </p>
                         <p className="flex items-center gap-2 text-slate-400 text-xs">
-                            <span className="text-base">📞</span> +91 98765 43210
+                            <span className="text-base">📞</span> +91 9815154045
                         </p>
                     </div>
 
