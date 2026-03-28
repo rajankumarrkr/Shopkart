@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import API from "../api/api";
 import ProductCard from "../components/ProductCard";
 
-const categories = ["All", "Tech", "Fashion", "Lifestyle", "Home"];
+const categories = ["All", "Tech", "Fashion", "Lifestyle"];
 
 const Shop = () => {
     const [products, setProducts] = useState([]);

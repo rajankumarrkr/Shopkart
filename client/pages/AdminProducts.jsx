@@ -293,7 +293,6 @@ const AdminProducts = () => {
                                         <option value="Tech">Tech & Gadgets</option>
                                         <option value="Fashion">Fashion & Apparel</option>
                                         <option value="Lifestyle">Lifestyle</option>
-                                        <option value="Home">Home & Living</option>
                                     </select>
                                 </div>
                                 <div className="space-y-2">

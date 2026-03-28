@@ -15,7 +15,6 @@ const CATEGORIES = [
   { name: "Tech", emoji: "💻", desc: "Gadgets & Electronics", color: "from-blue-50 to-indigo-50", border: "border-blue-100", icon_bg: "bg-blue-100", icon_color: "text-blue-600", link: "/shop" },
   { name: "Fashion", emoji: "👗", desc: "Style & Apparel", color: "from-pink-50 to-rose-50", border: "border-pink-100", icon_bg: "bg-pink-100", icon_color: "text-pink-600", link: "/shop" },
   { name: "Lifestyle", emoji: "✨", desc: "Premium Living", color: "from-amber-50 to-orange-50", border: "border-amber-100", icon_bg: "bg-amber-100", icon_color: "text-amber-600", link: "/shop" },
-  { name: "Home", emoji: "🏠", desc: "Decor & Essentials", color: "from-emerald-50 to-teal-50", border: "border-emerald-100", icon_bg: "bg-emerald-100", icon_color: "text-emerald-600", link: "/shop" },
 ];
 
 /* ── Star component ────────────────────────────── */
